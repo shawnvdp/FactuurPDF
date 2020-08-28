@@ -24,6 +24,7 @@ app.get("/", (req, res) => {
   res.redirect("form");
 });
 
+
 /*
 * TODO: NEW ROUTE LAYOUT -> PUT IN OWN ROUTE FOLDER {INVOICES/FORM}
 *
@@ -67,11 +68,26 @@ app.get("/export", (req, res) => {
 app.listen(PORT, () => console.log(`server listening on port ${PORT}`));
 
 async function constructPDF() {
-  const browser = await puppeteer.launch({ headless: true });
+  const browser = await puppeteer.launch({
+    args: ["--no-sandbox"],
+    headless: true
+  });
   const page = await browser.newPage();
   await page.goto("http://localhost:3000/invoice", { waitUntil: "networkidle0" });
-  const pdf = await page.pdf({ format: "A4", printBackground: true });
+  const pdf = await page.pdf({
+    format: "A4", printBackground: true
+  });
 
   await browser.close();
   return pdf;
 }
+
+// async function constructPDF() {
+//   const browser = await puppeteer.launch({ headless: true });
+//   const page = await browser.newPage();
+//   await page.goto("http://localhost:3000/invoice", { waitUntil: "networkidle0" });
+//   const pdf = await page.pdf({ format: "A4", printBackground: true });
+
+//   await browser.close();
+//   return pdf;
+// }

@@ -56,7 +56,7 @@ html, body{
 
 @font-face {
   font-family: "Eras Medium ITC";
-  src: url("../fonts/ErasMediumITC.ttf");
+  src: url("./fonts/ErasMediumITC.ttf");
 }
 .logo {
   grid-column: 1 / 2;
