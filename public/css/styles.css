@@ -41,14 +41,15 @@ html, body{
   grid-row: 3 / 4;
 
   display: grid;
-  grid-template-rows: 70% 30%;
+  grid-template-columns: 12% 1fr 12%;
+  grid-template-rows: repeat(2, min-content);
 }
 
 
 /* BORDER */
 
 .section, .upper > div, .middle > div, .lower > div {
-  border: 1px solid black;
+  /* border: 1px solid black; */
 }
 
 /* BORDER */
@@ -244,11 +245,13 @@ ul {
 /* LOWER */
 
 .displays {
+  grid-column: 2 / 3;
   grid-row: 1 / 2;
   /* background: lightsteelblue; */
 }
 
 .payment_message {
+  grid-column: 2 / 3;
   grid-row: 2 / 3;
   /* background: lightpink; */
 }
@@ -439,7 +442,7 @@ div.hours h4, div.materials h4 {
 
 .invoice_price {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 53% 47%;
 
   align-items: center;
 }
@@ -461,6 +464,10 @@ div.hours h4, div.materials h4 {
 
 }
 
+.invoice_price {
+  position: relative;
+}
+
 .invoice_price_wrapper {
   position: relative;
   padding-top: 7px;
@@ -475,10 +482,15 @@ div.hours h4, div.materials h4 {
 .subtotal, .vat, .total {
   display: grid;
   grid-template-columns: 45% 1ch 20% auto;
+  justify-items: flex-end;
 }
 
 .subtotal p:first-of-type, .vat p:first-of-type {
   padding-left: 25%;
+}
+
+.subtotal p:first-of-type, .vat p:first-of-type, .total p:first-of-type {
+  justify-self: flex-start;
 }
 
 .invoice_price_total {
@@ -519,6 +531,16 @@ div.hours h4, div.materials h4 {
   border-bottom: 1px dashed green;
 }
 
+.invoice_price::after {
+  content: "";
+  position: absolute;
+  left: 76.5%;
+  bottom: 14px;
+  height: 1px;
+  width: 24.5%;
+  border-bottom: 1px dashed green;
+}
+
 
 .align-end {
   text-align: end;
@@ -529,3 +551,42 @@ div.hours h4, div.materials h4 {
 }
 
 /* /INVOICE PRICE */
+
+
+/* DISPLAYS */
+
+.displays {
+  display: grid;
+  grid-template-columns: repeat(3, 160px);
+  justify-content: space-between;
+  align-content: center;
+
+  padding-top: 20px;
+  padding-bottom: 10px;
+}
+
+.display h5 {
+  font-size: 11px;
+}
+
+.display p {
+  font-size: 10px;
+}
+
+.display {
+  padding: 10px;
+  border: 1px solid green;
+  text-align: center;
+}
+
+/* /DISPLAYS */
+
+
+/* PAYMENT MESSAGE */
+
+.payment_message p {
+  font-size: 10px;
+  text-align: center;
+}
+
+/* /PAYMENT MESSAGE */
