@@ -326,6 +326,8 @@ grid-row: 2 / 3;
 
   display: grid;
   grid-template-rows: min-content 1fr 1fr min-content;
+
+  margin-top: 10px;
 }
 
 .invoice_price {
@@ -400,6 +402,20 @@ grid-row: 2 / 3;
   text-align: right;
 }
 
+ul p {
+  /* font-size: 14px; */
+  line-height: 0.95;
+}
+
+h4 {
+  font-size: 1.2em;
+  font-weight: 500;
+}
+
+div.hours h4, div.materials h4 {
+  padding-bottom: 5px;
+}
+
 .pl-20 {
   padding-left: 20px;
 }
@@ -417,3 +433,99 @@ grid-row: 2 / 3;
 }
 
 /* /INVOICE CONTENT */
+
+
+/* INVOICE PRICE */
+
+.invoice_price {
+  display: grid;
+  grid-template-columns: 50% 50%;
+
+  align-items: center;
+}
+
+.invoice_price_wrapper {
+  grid-column: 2 / 3;
+
+  display: grid;
+  grid-template-rows: repeat(2, min-content);
+  row-gap: 10px;
+}
+
+.invoice_price_sub {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+
+  display: grid;
+  grid-template-rows: repeat(2, min-content);
+
+}
+
+.invoice_price_wrapper {
+  position: relative;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.invoice_price_sub {
+  position: relative;
+  padding-bottom: 7px;
+}
+
+.subtotal, .vat, .total {
+  display: grid;
+  grid-template-columns: 45% 1ch 20% auto;
+}
+
+.subtotal p:first-of-type, .vat p:first-of-type {
+  padding-left: 25%;
+}
+
+.invoice_price_total {
+  grid-column: 1 / 2;
+  grid-row: 2 / 3;
+
+  display: grid;
+  grid-template-rows: repeat(2, min-content);
+}
+
+.invoice_price_wrapper::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 1px;
+  width: 52%;
+  border-top: 1px dashed green;
+}
+
+.invoice_price_wrapper::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 1px;
+  width: 52%;
+  border-bottom: 1px dashed green;
+}
+
+.invoice_price_sub::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  height: 1px;
+  width: 52%;
+  border-bottom: 1px dashed green;
+}
+
+
+.align-end {
+  text-align: end;
+}
+
+.align-center {
+  text-align: center;
+}
+
+/* /INVOICE PRICE */
