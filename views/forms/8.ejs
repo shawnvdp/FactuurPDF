@@ -1,5 +1,10 @@
 <%- include('../partials/header.ejs') %>
 
-<input class="data" type="checkbox" name="reminder">
+<form action="/form/8" method="POST">
+  <input id="reminderCb" type="checkbox" value="true" name="reminder">
+  <input id="reminderCbHidden" type="hidden" value="false" name="reminder">
+  <input type="submit" value="Afronden">
+</form>
+
 
 <%- include('../partials/footer.ejs') %>

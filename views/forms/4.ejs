@@ -1,6 +1,8 @@
 <%- include('../partials/header.ejs') %>
 
-<input class="data" type="text" name="description" placeholder="omschrijving">
-<a href="http://localhost:3000/form/5">Volgende</a>
+<form action="/form/4" method="POST">
+  <input type="text" name="description" placeholder="omschrijving">
+  <input type="submit" value="Volgende">
+</form>
 
 <%- include('../partials/footer.ejs') %>

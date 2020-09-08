@@ -1,7 +1,10 @@
 <%- include('../partials/header.ejs') %>
 
-<input class="data" type="date" name="date">
-<input class="data" type="date" name="enddate">
-<a href="http://localhost:3000/form/4">Volgende</a>
+<form action="/form/3" method="POST">
+  <input type="date" name="date">
+  <input type="date" name="enddate">
+  <input type="submit" value="Volgende">
+</form>
+
 
 <%- include('../partials/footer.ejs') %>

@@ -1,15 +1,18 @@
 <%- include('../partials/header.ejs') %>
 
-<ul class="materials">
-  <li>
-    <input class="material" type="text" placeholder="materiaal">
-    <input class="price" type="number" placeholder="prijs">
-  </li>
-  <li>
-    <input class="material" type="text" placeholder="materiaal">
-    <input class="price" type="number" placeholder="prijs">
-  </li>
-</ul>
-<a href="http://localhost:3000/form/7">Volgende</a>
+
+<form action="/form/6" method="POST">
+  <ul class="materials">
+    <li>
+      <input class="material" type="text" name="materials[][name]" placeholder="materiaal">
+      <input class="price" type="text" name="materials[][price]" placeholder="prijs">
+    </li>
+    <li>
+      <input class="material" type="text" name="materials[][name]" placeholder="materiaal">
+      <input class="price" type="text" name="materials[][price]" placeholder="prijs">
+    </li>
+  </ul>
+  <input type="submit" value="Volgende">
+</form>
 
 <%- include('../partials/footer.ejs') %>

@@ -1,8 +1,10 @@
 <%- include('../partials/header.ejs') %>
 
-<input class="data" type="text" name="name" placeholder="naam">
-<input class="data" type="text" name="address" placeholder="adres">
-<input class="data" type="text" name="postal" placeholder="postcode">
-<a href="http://localhost:3000/form/3">Volgende</a>
+<form action="/form/2" method="POST">
+  <input type="text" name="name" placeholder="naam">
+  <input type="text" name="address" placeholder="adres">
+  <input type="text" name="postal" placeholder="postcode">
+  <input type="submit" value="Volgende">
+</form>
 
 <%- include('../partials/footer.ejs') %>

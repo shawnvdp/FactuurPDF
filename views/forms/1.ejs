@@ -1,6 +1,8 @@
 <%- include('../partials/header.ejs') %>
 
-<input class="data" type="number" name="invoice_number" placeholder="Factuurnummer">
-<a href="http://localhost:3000/form/2">Volgende</a>
+<form action="/form/1" method="POST">
+  <input type="number" name="invoice_number" placeholder="Factuurnummer">
+  <input type="submit" value="Volgende">
+</form>
 
 <%- include('../partials/footer.ejs') %>

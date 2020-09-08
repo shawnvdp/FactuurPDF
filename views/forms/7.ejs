@@ -1,10 +1,14 @@
 <%- include('../partials/header.ejs') %>
 
-<select class="data" name="vat">
-  <option value="null">BTW %</option>
-  <option value="9">9%</option>
-  <option value="21">21%</option>
-</select>
-<a href="http://localhost:3000/form/8">Volgende</a>
+
+<form action="/form/7" method="POST">
+  <select name="vat">
+    <option value="null">BTW %</option>
+    <option value="9">9%</option>
+    <option value="21">21%</option>
+  </select>
+  <input type="submit" value="Volgende">  
+</form>
+
 
 <%- include('../partials/footer.ejs') %>

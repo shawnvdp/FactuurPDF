@@ -12,13 +12,13 @@ app.use(express.static(path.join(__dirname, "public")));
 
 //express body parser middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 
 app.use(expressSanitizer());
 
 
-let formData;
+let formData = {};
 
 app.get("/", (req, res) => {
   res.redirect("form");
@@ -32,8 +32,28 @@ app.get("/form/:id", (req, res) => {
   res.render(`forms/${req.params.id}`);
 });
 
-app.post("/form", (req, res) => {
-  console.log(req.body);
+app.post("/form/:id", (req, res) => {
+  for (const [key, value] of Object.entries(req.body)) {
+    formData[key] = value;
+    // console.log(`${key}: ${value}`)
+  }
+  // console.log(formData);
+  console.log(formData.materials);
+
+  // console.log(req.params.id);
+
+  // formData
+  // console.log(req.body);
+
+  let nextStep = parseInt(req.params.id) + 1;
+  if (req.params.id == 8) {
+    // res.redirect("/export");
+    res.send("Done");
+    res.end();
+  } else {
+    res.render(`forms/${nextStep}`);
+  }
+
   // formData = req.sanitize(req.body);
   // formData = req.sanitize(req.body.test);
   // res.redirect("export");
