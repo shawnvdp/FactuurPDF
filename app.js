@@ -24,6 +24,21 @@ app.get("/", (req, res) => {
   res.redirect("form");
 });
 
+app.get("/form", (req, res) => {
+  res.render("forms/form");
+});
+
+app.get("/form/:id", (req, res) => {
+  res.render(`forms/${req.params.id}`);
+});
+
+app.post("/form", (req, res) => {
+  console.log(req.body);
+  // formData = req.sanitize(req.body);
+  // formData = req.sanitize(req.body.test);
+  // res.redirect("export");
+});
+
 
 /*
 * TODO: NEW ROUTE LAYOUT -> PUT IN OWN ROUTE FOLDER {INVOICES/FORM}
@@ -43,15 +58,6 @@ app.get("/invoice", (req, res) => {
   res.render("invoices/invoice", { test: formData });
 });
 
-app.get("/form", (req, res) => {
-  res.render("forms/form");
-});
-
-//send data using fetch in json format instead of form name attributes so we can expect json data here and handle it better
-app.post("/form", (req, res) => {
-  formData = req.sanitize(req.body.test);
-  res.redirect("export");
-});
 
 app.get("/export", (req, res) => {
   constructPDF()
