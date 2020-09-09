@@ -13,6 +13,8 @@
     "ejs": "^3.1.5",
     "express": "^4.17.1",
     "express-sanitizer": "^1.0.5",
+    "method-override": "^3.0.0",
+    "mysql": "github:mysqljs/mysql",
     "puppeteer": "^5.2.1"
   },
   "devDependencies": {

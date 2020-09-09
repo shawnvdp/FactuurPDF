@@ -2,10 +2,14 @@ const expressSanitizer = require("express-sanitizer"),
   express = require("express"),
   app = express(),
   puppeteer = require("puppeteer"),
-  path = require("path");
+  path = require("path"),
+  methodOverride = require("method-override");
 
 const PORT = process.env.PORT || 3000;
 
+const { connection, query } = require("./database");
+
+connection.connect();
 
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
@@ -14,6 +18,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(methodOverride("_method"));
 
 app.use(expressSanitizer());
 
@@ -21,66 +26,67 @@ app.use(expressSanitizer());
 let formData = {};
 
 app.get("/", (req, res) => {
-  res.redirect("form");
+  res.render("index");
 });
+
+//FORM
 
 app.get("/form", (req, res) => {
-  res.render("forms/form");
+  res.render("forms/index");
 });
 
-app.get("/form/:id", (req, res) => {
-  res.render(`forms/${req.params.id}`);
+
+// INVOICE
+
+//NEW
+app.get("/invoice/new", (req, res) => {
+  res.render("invoices/new");
 });
 
-app.post("/form/:id", (req, res) => {
+//RENDER SPECIFIC ID
+app.get("/invoice/:id", async (req, res) => {
+  let result = await query(`SELECT * FROM invoices.invoices WHERE id = ${req.params.id}`);
+
+  if (!result.length) {
+    res.redirect("/");
+    throw new Error(`No result found in database for id: ${req.params.id}`);
+  }
+
+  res.render("invoices/index", { formData: result });
+});
+
+//CREATE
+app.post("/invoice", (req, res) => {
+  console.log("create new entry in db");
+
   for (const [key, value] of Object.entries(req.body)) {
     formData[key] = value;
-    // console.log(`${key}: ${value}`)
   }
-  // console.log(formData);
-  console.log(formData.materials);
+  console.log(formData);
+  res.redirect("/");
+});
 
-  // console.log(req.params.id);
+//EDIT
+app.get("/invoice/:id/edit", async (req, res) => {
+  let result = await query(`SELECT * FROM invoices.invoices WHERE id = ${req.params.id}`);
 
-  // formData
-  // console.log(req.body);
-
-  let nextStep = parseInt(req.params.id) + 1;
-  if (req.params.id == 8) {
-    // res.redirect("/export");
-    res.send("Done");
-    res.end();
-  } else {
-    res.render(`forms/${nextStep}`);
+  if (!result.length) {
+    res.redirect("/");
+    throw new Error(`No result found in database for id: ${req.params.id}`);
   }
 
-  // formData = req.sanitize(req.body);
-  // formData = req.sanitize(req.body.test);
-  // res.redirect("export");
+  res.render("invoices/edit", { formData: result, id: req.params.id });
+});
+
+//UPDATE
+app.put("/invoice/:id", (req, res) => {
+  console.log(`should update invoice id: ${req.params.id}`);
 });
 
 
-/*
-* TODO: NEW ROUTE LAYOUT -> PUT IN OWN ROUTE FOLDER {INVOICES/FORM}
-*
-//landing page overview
-app.get("/", (req, res) => {});
-//form to construct new PDF 
-app.get("/form", (req, res) => {});
-//retrieve all invoices, use to list all invoice files with clickable links to retrieve/display each one with the /invoices/:id route
-app.get("/invoices", (req, res) => {});
-//receive form data, construct PDF with request body data here -> redirect to /invoices/id after finished constructing PDF
-app.post("/invoices", (req, res) => {});
-//get specific PDF id (filename = invoice #?) -> safe PDF as file and then serve file with id of invoice number?
-app.get("/invoices/:id", (req, res) => {}); */
-
-app.get("/invoice", (req, res) => {
-  res.render("invoices/invoice", { test: formData });
-});
-
-
-app.get("/export", (req, res) => {
-  constructPDF()
+// /:id to pass id into constructPDF
+app.get("/export/:id", (req, res) => {
+  constructPDF(req.params.id)
     .then(pdf => {
       res.set({
         "Content-Type": "application/pdf",
@@ -93,13 +99,14 @@ app.get("/export", (req, res) => {
 
 app.listen(PORT, () => console.log(`server listening on port ${PORT}`));
 
-async function constructPDF() {
+async function constructPDF(id) {
   const browser = await puppeteer.launch({
     args: ["--no-sandbox"],
     headless: true
   });
   const page = await browser.newPage();
-  await page.goto("http://localhost:3000/invoice", { waitUntil: "networkidle0" });
+  // invoice/id
+  await page.goto(`http://localhost:3000/invoice/${id}`, { waitUntil: "networkidle0" });
   const pdf = await page.pdf({
     format: "A4", printBackground: true
   });
@@ -107,13 +114,3 @@ async function constructPDF() {
   await browser.close();
   return pdf;
 }
-
-// async function constructPDF() {
-//   const browser = await puppeteer.launch({ headless: true });
-//   const page = await browser.newPage();
-//   await page.goto("http://localhost:3000/invoice", { waitUntil: "networkidle0" });
-//   const pdf = await page.pdf({ format: "A4", printBackground: true });
-
-//   await browser.close();
-//   return pdf;
-// }
