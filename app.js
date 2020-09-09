@@ -7,7 +7,8 @@ const expressSanitizer = require("express-sanitizer"),
 
 const PORT = process.env.PORT || 3000;
 
-const { connection, query, updateInvoice, addInvoiceToDb } = require("./database");
+const { query, updateInvoice, addInvoiceToDb } = require("./database");
+const connection = require("./db");
 
 connection.connect();
 
