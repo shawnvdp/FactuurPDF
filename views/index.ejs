@@ -4,4 +4,25 @@
 
 <a href="/invoice/new">NEW</a>
 
+<table cellspacing="0" cellpadding="0">
+  <thead>
+    <tr>
+      <td>Nummer</td>
+      <td>Naam</td>
+      <td>Adres</td>
+      <td>Postcode</td>
+    </tr>
+  </thead>
+  <tbody>
+  <% invoices.forEach(invoice => { %>
+    <tr class="invoice_table_row" data-href="http://localhost:3000/invoice/<%= invoice.id %>">
+      <td><%= invoice.id %></td>
+      <td><%= invoice.name %></td>
+      <td><%= invoice.address %></td>
+      <td><%= invoice.postal %></td>
+    </tr>
+  <% }) %>
+  </tbody>
+</table>
+
 <%- include('partials/footer.ejs') %>

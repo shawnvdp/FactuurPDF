@@ -1,0 +1,4 @@
+.invoice_table_row:hover {
+  cursor: pointer;
+  background: grey;
+}

@@ -7,7 +7,7 @@ const expressSanitizer = require("express-sanitizer"),
 
 const PORT = process.env.PORT || 3000;
 
-const { connection, query, addInvoiceToDb } = require("./database");
+const { connection, query, updateInvoice, addInvoiceToDb } = require("./database");
 
 connection.connect();
 
@@ -23,14 +23,10 @@ app.use(methodOverride("_method"));
 app.use(expressSanitizer());
 
 
-let formData = {};
-
-app.get("/", (req, res) => {
-  //query db for all invoices
-  //pass into index.ejs
-  res.render("index");
+app.get("/", async (req, res) => {
+  let invoices = await query("SELECT * FROM invoice");
+  res.render("index", { invoices });
 });
-
 
 // ** INVOICE **
 
@@ -63,31 +59,25 @@ app.get("/invoice/:id", async (req, res) => {
 
 //EDIT FORM
 app.get("/invoice/:id/edit", async (req, res) => {
-  let result = await query(`SELECT * FROM invoices.invoice WHERE id = ${req.params.id}`);
+  let invoice = await query(`SELECT * FROM invoices.invoice WHERE id = ${req.params.id}`);
+  let materials = await query(`SELECT materials.* FROM invoice INNER JOIN invoice_materials im ON im.invoice_id = invoice.id INNER JOIN materials ON im.materials_id = materials.id AND invoice.id = ${req.params.id}`);
 
-  if (!result.length) {
+  if (!invoice.length) {
     res.redirect("/");
     throw new Error(`No result found in database for id: ${req.params.id}`);
   }
+  invoice[0].date = invoice[0].date.toISOString().substr(0, 19).replace("T", " ").split(" ")[0];
+  invoice[0].enddate = invoice[0].enddate.toISOString().substr(0, 19).replace("T", " ").split(" ")[0];
 
-  res.render("invoices/edit", { formData: result, id: req.params.id });
+  res.render("invoices/edit", { invoice: invoice[0], materials, id: req.params.id });
 });
 
 //UPDATE
-app.put("/invoice/:id", (req, res) => {
-  console.log(`should update invoice id: ${req.params.id}`);
+app.put("/invoice/:id", async (req, res) => {
+  updateInvoice(req.body);
+  res.redirect(`/invoice/${req.params.id}`);
 });
 
-// SELECT materials.*
-// FROM invoice
-// INNER JOIN invoice_materials im
-// ON im.invoice_id = invoice.id
-// INNER JOIN materials
-// ON im.materials_id = materials.id
-// AND invoice.id = 1
-
-
-// /:id to pass id into constructPDF
 app.get("/export/:id", (req, res) => {
   constructPDF(req.params.id)
     .then(pdf => {
@@ -108,7 +98,6 @@ async function constructPDF(id) {
     headless: true
   });
   const page = await browser.newPage();
-  // invoice/id
   await page.goto(`http://localhost:3000/invoice/${id}`, { waitUntil: "networkidle0" });
   const pdf = await page.pdf({
     format: "A4", printBackground: true

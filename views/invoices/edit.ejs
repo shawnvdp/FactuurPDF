@@ -5,6 +5,37 @@
 <h5>/invoice/<%= id %></h5>
 
 <form action="/invoice/<%= id %>?_method=PUT" method="POST">
+  <input type="number" name="invoice_number" placeholder="Factuurnummer" value="<%= invoice.id %>">
+
+  <input type="text" name="name" placeholder="naam" value="<%= invoice.name %>">
+  <input type="text" name="address" placeholder="adres" value="<%= invoice.address %>">
+  <input type="text" name="postal" placeholder="postcode" value="<%= invoice.postal %>">
+
+  <input type="date" name="date" value="<%= invoice.date %>">
+  <input type="date" name="enddate" value="<%= invoice.enddate %>">
+
+  <input type="text" name="description" placeholder="omschrijving" value="<%= invoice.description %>">
+
+  <input type="text" name="hours" placeholder="uren" value="<%= invoice.hours %>">
+  <input type="text" name="hourly" placeholder="per uur" value="<%= invoice.hourly %>">
+
+  <ul class="materials">
+  <% materials.forEach(material => { %>
+      <li>
+        <input class="material" type="text" name="materials[name]" placeholder="materiaal" value="<%= material.name %>">
+        <input class="price" type="text" name="materials[price]" placeholder="prijs" value="<%= material.price %>">
+        <button class="removeMaterial">-</button>
+    </li>
+  <% }) %>
+  </ul>
+  <button id="addMaterial">+</button>
+
+  <select id="vatDropdown" name="vat" data-option="<%= invoice.vat %>">
+    <option value="null">BTW %</option>
+    <option value="9">9%</option>
+    <option value="21">21%</option>
+  </select>
+  
   <input type="submit" value="Update">
 </form>
 
