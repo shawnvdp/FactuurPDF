@@ -7,7 +7,7 @@ const expressSanitizer = require("express-sanitizer"),
 
 const PORT = process.env.PORT || 3000;
 
-const { connection, query } = require("./database");
+const { connection, query, addInvoiceToDb } = require("./database");
 
 connection.connect();
 
@@ -26,26 +26,32 @@ app.use(expressSanitizer());
 let formData = {};
 
 app.get("/", (req, res) => {
+  //query db for all invoices
+  //pass into index.ejs
   res.render("index");
 });
 
-//FORM
 
-app.get("/form", (req, res) => {
-  res.render("forms/index");
-});
+// ** INVOICE **
 
-
-// INVOICE
-
-//NEW
+//NEW FORM
 app.get("/invoice/new", (req, res) => {
   res.render("invoices/new");
 });
 
-//RENDER SPECIFIC ID
+//CREATE
+app.post("/invoice", async (req, res) => {
+  let success = await addInvoiceToDb(req.body);
+  if (!success) {
+    res.send("Factuurnummer bestaat al in de database.");
+  } else {
+    res.redirect("/");
+  }
+});
+
+//READ
 app.get("/invoice/:id", async (req, res) => {
-  let result = await query(`SELECT * FROM invoices.invoices WHERE id = ${req.params.id}`);
+  let result = await query(`SELECT * FROM invoices.invoice WHERE id = ${req.params.id}`);
 
   if (!result.length) {
     res.redirect("/");
@@ -55,20 +61,9 @@ app.get("/invoice/:id", async (req, res) => {
   res.render("invoices/index", { formData: result });
 });
 
-//CREATE
-app.post("/invoice", (req, res) => {
-  console.log("create new entry in db");
-
-  for (const [key, value] of Object.entries(req.body)) {
-    formData[key] = value;
-  }
-  console.log(formData);
-  res.redirect("/");
-});
-
-//EDIT
+//EDIT FORM
 app.get("/invoice/:id/edit", async (req, res) => {
-  let result = await query(`SELECT * FROM invoices.invoices WHERE id = ${req.params.id}`);
+  let result = await query(`SELECT * FROM invoices.invoice WHERE id = ${req.params.id}`);
 
   if (!result.length) {
     res.redirect("/");
@@ -82,6 +77,14 @@ app.get("/invoice/:id/edit", async (req, res) => {
 app.put("/invoice/:id", (req, res) => {
   console.log(`should update invoice id: ${req.params.id}`);
 });
+
+// SELECT materials.*
+// FROM invoice
+// INNER JOIN invoice_materials im
+// ON im.invoice_id = invoice.id
+// INNER JOIN materials
+// ON im.materials_id = materials.id
+// AND invoice.id = 1
 
 
 // /:id to pass id into constructPDF
