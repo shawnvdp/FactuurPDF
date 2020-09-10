@@ -36,14 +36,40 @@ app.get("/invoice/new", (req, res) => {
   res.render("invoices/new");
 });
 
+
+function sanitize(req, res, next) {
+  if (req.body.hours) {
+    req.body.hours = req.body.hours.replace(/€| /g, "");
+    req.body.hours = req.body.hours.replace(/,/g, ".");
+  }
+  if (req.body.hourly) {
+    req.body.hourly = req.body.hourly.replace(/€| /g, "");
+    req.body.hourly = req.body.hourly.replace(/,/g, ".");
+  }
+  if (req.body.materials.price) {
+    if (Array.isArray(req.body.materials.price)) {
+      req.body.materials.price = req.body.materials.price.map(n => {
+        n.replace(/€| /g, "");
+        n.replace(/,/g, ".");
+      });
+    } else {
+      req.body.materials.price = req.body.materials.price.replace(/€| /g, "");
+      req.body.materials.price = req.body.materials.price.replace(/,/g, ".");
+    }
+  }
+  next();
+}
+
 //CREATE
-app.post("/invoice", async (req, res) => {
+app.post("/invoice", sanitize, async (req, res) => {
   let success = await addInvoiceToDb(req.body);
+  // console.log(req.body);
   if (!success) {
     res.send("Factuurnummer bestaat al in de database.");
   } else {
     res.redirect("/");
   }
+
 });
 
 //READ
@@ -74,7 +100,7 @@ app.get("/invoice/:id/edit", async (req, res) => {
 });
 
 //UPDATE
-app.put("/invoice/:id", async (req, res) => {
+app.put("/invoice/:id", sanitize, async (req, res) => {
   updateInvoice(req.body);
   res.redirect(`/invoice/${req.params.id}`);
 });

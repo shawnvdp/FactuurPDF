@@ -1,13 +1,14 @@
 (function () {
   bindEventListeners();
 
-  let reminderCb = document.querySelector("#reminderCb");
+  let staticPriceCb = document.querySelector("#staticPriceCb");
 
-  if (reminderCb) {
-    reminderCb.addEventListener("input", event => {
-      if (document.querySelector("#reminderCb").checked) {
-        document.querySelector("#reminderCbHidden").disabled = true;
-      }
+  if (staticPriceCb) {
+    staticPriceCb.addEventListener("input", event => {
+      document.querySelector("#staticPrice").disabled = !staticPriceCb.checked;
+      document.querySelectorAll(".disable_for_static").forEach(input => {
+        input.disabled = staticPriceCb.checked;
+      });
     });
   }
 

@@ -21,11 +21,20 @@
 
   <ul class="materials">
   <% materials.forEach(material => { %>
-      <li>
+    <% if (invoice.hoursPrice == "0" || invoice.hoursPrice == null) { %>
+    <li>
+        <input class="material" type="text" name="materials[name]" placeholder="materiaal" value="<%= material.name %>" disabled>
+        <input class="price" type="text" name="materials[price]" placeholder="prijs" value="<%= material.price %>" disabled>
+        <button class="removeMaterial" disabled>-</button>
+    </li>
+    <% } else { %>
+    <li>
         <input class="material" type="text" name="materials[name]" placeholder="materiaal" value="<%= material.name %>">
         <input class="price" type="text" name="materials[price]" placeholder="prijs" value="<%= material.price %>">
         <button class="removeMaterial">-</button>
     </li>
+    <% } %>
+      
   <% }) %>
   </ul>
   <button id="addMaterial">+</button>
@@ -35,6 +44,14 @@
     <option value="9">9%</option>
     <option value="21">21%</option>
   </select>
+
+  <% if (invoice.hoursPrice == "0" || invoice.hoursPrice == null) { %>
+    <input id="staticPriceCb" type="checkbox" value="true" checked>
+    <input id="staticPrice" type="text" name="staticPriceSubtotal" value="<%= invoice.subtotal %>">
+  <% } else { %>
+    <input id="staticPriceCb" type="checkbox" value="true">
+    <input id="staticPrice" type="text" name="staticPriceSubtotal" disabled>
+  <% } %>
   
   <input type="submit" value="Update">
 </form>

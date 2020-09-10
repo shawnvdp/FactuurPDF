@@ -14,19 +14,17 @@
 
   <input type="text" name="description" placeholder="omschrijving">
 
-  <input type="text" name="hours" placeholder="uren">
-  <input type="text" name="hourly" placeholder="per uur">
+  <input class="disable_for_static" type="text" name="hours" placeholder="uren">
+  <input class="disable_for_static" type="text" name="hourly" placeholder="per uur">
 
   <ul class="materials">
     <li>
-      <input class="material" type="text" name="materials[name]" placeholder="materiaal">
-      <input class="price" type="text" name="materials[price]" placeholder="prijs">
-    </li>
-    <li>
-      <input class="material" type="text" name="materials[name]" placeholder="materiaal">
-      <input class="price" type="text" name="materials[price]" placeholder="prijs">
+      <input class="material disable_for_static" type="text" name="materials[name]" placeholder="materiaal">
+      <input class="price disable_for_static" type="text" name="materials[price]" placeholder="prijs">
+      <button class="removeMaterial disable_for_static">-</button>
     </li>
   </ul>
+  <button id="addMaterial" class="disable_for_static">+</button>
 
   <select name="vat">
     <option value="null">BTW %</option>
@@ -34,8 +32,8 @@
     <option value="21">21%</option>
   </select>
 
-  <input id="reminderCb" type="checkbox" value="true" name="reminder">
-  <input id="reminderCbHidden" type="hidden" value="false" name="reminder">
+  <input id="staticPriceCb" type="checkbox" value="true">
+  <input id="staticPrice" type="text" name="staticPriceSubtotal" disabled>
 
   <input type="submit" value="Maak">
 </form>
