@@ -75,7 +75,7 @@ app.get("/invoice/:id", async (req, res) => {
     throw new Error(`No result found in database for id: ${req.params.id}`);
   }
 
-  res.render("invoices/index", { formData: result });
+  res.render("invoices/index", { formData: result, reminder: req.query.reminder });
 });
 
 //EDIT FORM
@@ -87,8 +87,6 @@ app.get("/invoice/:id/edit", async (req, res) => {
     res.redirect("/");
     throw new Error(`No result found in database for id: ${req.params.id}`);
   }
-  invoice[0].date = invoice[0].date.toISOString().substr(0, 19).replace("T", " ").split(" ")[0];
-  invoice[0].enddate = invoice[0].enddate.toISOString().substr(0, 19).replace("T", " ").split(" ")[0];
 
   res.render("invoices/edit", { invoice: invoice[0], materials, id: req.params.id });
 });

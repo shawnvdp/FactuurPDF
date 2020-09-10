@@ -1,28 +1,96 @@
-<%- include('partials/header.ejs') %>
+<%- include('partials/header_index.ejs') %>
 
 <h1>HOME</h1>
 
 <a href="/invoice/new">NEW</a>
 
-<table cellspacing="0" cellpadding="0">
-  <thead>
-    <tr>
-      <td>Nummer</td>
-      <td>Naam</td>
-      <td>Adres</td>
-      <td>Postcode</td>
-    </tr>
-  </thead>
-  <tbody>
-  <% invoices.forEach(invoice => { %>
-    <tr class="invoice_table_row" data-href="http://localhost:3000/invoice/<%= invoice.id %>">
-      <td><%= invoice.id %></td>
-      <td><%= invoice.name %></td>
-      <td><%= invoice.address %></td>
-      <td><%= invoice.postal %></td>
-    </tr>
-  <% }) %>
-  </tbody>
-</table>
+<div class="container">
+  <div class="flex flex-col">
+  <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+    <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+      <div class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                Nummer
+              </th>
+              <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                Klant
+              </th>
+              <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                Datum
+              </th>
+              <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                BTW
+              </th>
+              <th class="px-6 py-3 bg-gray-50 text-left text-xs leading-4 font-medium text-gray-500 uppercase tracking-wider">
+                Totaal
+              </th>
+              <th class="px-6 py-3 bg-gray-50"></th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+          <% invoices.forEach(invoice => { %>
+            <tr class="invoice_table_row" data-href="http://localhost:3000/invoice/<%= invoice.id %>">
+              <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
+                <%= invoice.id %>
+              </td>
+              <td class="px-6 py-4 whitespace-no-wrap">
+                <div class="text-sm leading-5 text-gray-900"><%= invoice.name %></div>
+                <div class="text-sm leading-5 text-gray-500"><%= invoice.address %>, <%= invoice.postal %></div>
+              </td>
+              <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
+                <%= invoice.date %> - <%= invoice.enddate %>
+              </td>
+              <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                  9%
+                </span>
+                BTW
+              </td>
+              <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
+                Totaal
+              </td>
+              <td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
+                <a href="/invoice/<%= invoice.id %>/edit" class="text-indigo-600 hover:text-indigo-900">Bewerken</a>
+                <a href="/invoice/<%= invoice.id %>?reminder=true" class="text-indigo-600 hover:text-indigo-900">Herinnering</a>
+              </td>
+            </tr>
+          <% }) %>
+            
+
+            <!-- More rows... -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="container">
+  <table cellspacing="0" cellpadding="0">
+    <thead>
+      <tr>
+        <th>Nummer</th>
+        <th>Naam</th>
+        <th>Adres</th>
+        <th>Postcode</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% invoices.forEach(invoice => { %>
+      <tr class="invoice_table_row" data-href="http://localhost:3000/invoice/<%= invoice.id %>">
+        <td><%= invoice.id %></td>
+        <td><%= invoice.name %></td>
+        <td><%= invoice.address %></td>
+        <td><%= invoice.postal %></td>
+      </tr>
+    <% }) %>
+    </tbody>
+  </table>
+</div>
+
 
 <%- include('partials/footer.ejs') %>

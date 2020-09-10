@@ -1,4 +1,24 @@
+* {
+  font-family: 'Roboto', sans-serif;
+}
+
 .invoice_table_row:hover {
   cursor: pointer;
-  background: grey;
+  background: rgba(231, 231, 231, 0.5);
+}
+
+.container {
+  max-width: 90rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+a {
+  display: block;
+  text-align: center;
+  line-height: 1.3rem
+}
+
+thead th:last-of-type {
+  width: 185px;
 }

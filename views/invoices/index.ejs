@@ -52,7 +52,11 @@
 
       </div>
       <div class="sender_info">
-        <h2 class="header">Herinnering</h2>
+        <h2 class="header">
+          <% if (reminder) { %>
+            Herinnering
+          <% } %>
+        </h2>
         <ul class="sender_data">
           <li>J. Iedema</li>
           <li>Bevrijdingslaan 1C</li>

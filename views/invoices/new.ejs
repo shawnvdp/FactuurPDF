@@ -23,7 +23,7 @@
       <input class="price disable_for_static" type="text" name="materials[price]" placeholder="prijs">
       <button class="removeMaterial disable_for_static">-</button>
     </li>
-    <li>
+    <li> <!-- sending along empty hidden li to force materials.name and materials.price to be an array even with only 1 material -->
       <input class="material disable_for_static" type="hidden" name="materials[name]" value="">
       <input class="price disable_for_static" type="hidden" name="materials[price]" value="">
       <button class="removeMaterial disable_for_static">-</button>
