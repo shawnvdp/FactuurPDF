@@ -38,24 +38,20 @@ app.get("/invoice/new", (req, res) => {
 
 
 function sanitize(req, res, next) {
+  const mapObj = {
+    "€": "",
+    " ": "",
+    ",": "."
+  };
+
   if (req.body.hours) {
-    req.body.hours = req.body.hours.replace(/€| /g, "");
-    req.body.hours = req.body.hours.replace(/,/g, ".");
+    req.body.hours = req.body.hours.replace(/€| |,/g, matched => mapObj[matched]);
   }
   if (req.body.hourly) {
-    req.body.hourly = req.body.hourly.replace(/€| /g, "");
-    req.body.hourly = req.body.hourly.replace(/,/g, ".");
+    req.body.hourly = req.body.hourly.replace(/€| |,/g, matched => mapObj[matched]);
   }
-  if (req.body.materials.price) {
-    if (Array.isArray(req.body.materials.price)) {
-      req.body.materials.price = req.body.materials.price.map(n => {
-        n.replace(/€| /g, "");
-        n.replace(/,/g, ".");
-      });
-    } else {
-      req.body.materials.price = req.body.materials.price.replace(/€| /g, "");
-      req.body.materials.price = req.body.materials.price.replace(/,/g, ".");
-    }
+  if (req.body.materials) {
+    req.body.materials.price = req.body.materials.price.map(n => n.replace(/€| |,/g, matched => mapObj[matched]));
   }
   next();
 }
@@ -63,13 +59,11 @@ function sanitize(req, res, next) {
 //CREATE
 app.post("/invoice", sanitize, async (req, res) => {
   let success = await addInvoiceToDb(req.body);
-  // console.log(req.body);
   if (!success) {
     res.send("Factuurnummer bestaat al in de database.");
   } else {
     res.redirect("/");
   }
-
 });
 
 //READ

@@ -1,6 +1,5 @@
 const connection = require("./db");
 const currency = require("currency.js");
-const { static } = require("express");
 
 async function query(queryString) {
   return new Promise((resolve, reject) => {
@@ -77,30 +76,14 @@ async function deleteMaterials(invoiceId) {
 }
 
 async function updateMaterials(invoiceId, materials) {
-  //materials.name and materials.price is an array of objects if invoice has > 1 materials, otherwise its an object
-  const isArray = Array.isArray(materials.name);
-  let nMaterials;
-
-  if (Array.isArray(materials.name)) {
-    //iter over length of array
-    nMaterials = materials.name.length;
-  } else {
-    //if not array and materials.name is defined, it HAS to be just 1 material with invoice
-    if (materials.name)
-      nMaterials = 1;
-  }
+  let nMaterials = materials.name.length;
 
   try {
     for (let i = 0; i < nMaterials; i++) {
-      if (isArray) {
-        if (materials.name[i].trim() == "") continue;
-      } else {
-        if (materials.name.trim() == "") continue;
-      }
+      if (materials.name[i].trim() == "") continue;
 
       //add each material to materials table, store the id it got given
-      //materials.name = array if invoice has > 1 materials, otherwise its the string of the single material
-      let { insertId } = await query(`INSERT INTO materials (name, price) VALUES ('${isArray ? materials.name[i] : materials.name}', '${isArray ? materials.price[i] : materials.price}')`);
+      let { insertId } = await query(`INSERT INTO materials (name, price) VALUES ('${materials.name[i]}', '${materials.price[i]}')`);
       //link invoice with materials
       await query(`INSERT INTO invoice_materials (invoice_id, materials_id) VALUES ('${invoiceId}', '${insertId}')`);
     }
@@ -115,21 +98,12 @@ function getInvoicePriceHours(hours, hourly, materials, vat) {
   let currency_hoursPrice = currency(hoursPrice);
   // console.log(`hours: ${currency_hoursPrice.value} ========== (${hours} * ${hourly})`);
 
-  //1 material = object, > 1 materials = array
-  let currency_array;
-  let matsPrice;
-  if (Array.isArray(materials.price)) {
-    currency_array = materials.price.map(price => currency(price).value);
-    matsPrice = currency_array.reduce((acc, currentValue) => acc + currentValue);
-  }
+  let currency_array = materials.price.map(price => currency(price).value);
+  let matsPrice = currency_array.reduce((acc, currentValue) => acc + currentValue);
 
   // console.log(`materials: ${matsPrice} ========== (${materials.price})`);
-  let subtotal;
-  if (typeof matsPrice == undefined) {
-    subtotal = currency_hoursPrice.add(materials.price);
-  } else {
-    subtotal = currency_hoursPrice.add(matsPrice);
-  }
+  let subtotal = currency_hoursPrice.add(matsPrice);
+
   // console.log(`subtotal: ${subtotal.value} ========== (${currency_hoursPrice.value} + ${matsPrice})`);
 
   let vatPrice = currency((subtotal / 100) * parseInt(vat));
