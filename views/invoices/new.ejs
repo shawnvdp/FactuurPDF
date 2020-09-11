@@ -1,46 +1,102 @@
-<%- include('../partials/header.ejs') %>
+<%- include('../partials/header_forms.ejs') %>
 
-<h1>NEW</h1>
+<a class="homeBtn" href="/"><i class="fa fa-chevron-left"></i> Terug naar Home</a>
 
-<form action="/invoice" method="POST">
-  <input type="number" name="invoice_number" placeholder="Factuurnummer">
+<div class="container">
+  <h1 class="form_header">Nieuwe Factuur</h1>
+  <form action="/invoice" method="POST">
+    <div class="form-row">
+      <div class="col-md-2 mb-3">
+        <label for="factuurNummer">Factuurnummer</label>
+        <input type="number" class="form-control" name="invoice_number" id="factuurNummer" placeholder="Factuurnummer" required>
+      </div>
+      <div class="col-md-2 mb-3">
+        <label for="staticPriceCb">Aangenomen bedrag?</label>
+        <input class="form-control" id="staticPriceCb" type="checkbox" value="true">
+      </div>
+      <div class="col-md-2 mb-3">
+        <label for="staticPrice">Aangenomen bedrag</label>
+        <input class="form-control" id="staticPrice" type="text" name="staticPriceSubtotal" placeholder="Bedrag" disabled>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-4 mb-3">
+        <label for="validationDefault01">Naam</label>
+        <input type="text" class="form-control" name="name" id="validationDefault01" placeholder="Naam" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="validationDefault02">Adres</label>
+        <input type="text" class="form-control" name="address" id="validationDefault02" placeholder="Adres" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="validationDefault02">Postcode</label>
+        <input type="text" class="form-control" name="postal" id="validationDefault02" placeholder="Postcode" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault03">Begindatum</label>
+        <input type="date" class="form-control" name="date" id="validationDefault03" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault04">Einddatum</label>
+        <input type="date" class="form-control" name="enddate" id="validationDefault04" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="validationDefault05">Omschrijving</label>
+        <input type="text" class="form-control" name="description" id="validationDefault05" placeholder="Omschrijving" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault06">Aantal uren</label>
+        <input type="text" class="form-control disable_for_static" name="hours" id="validationDefault06" placeholder="Aantal uren">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault07">€ per uur</label>
+        <input type="text" class="form-control disable_for_static" name="hourly" id="validationDefault07" placeholder="€ per uur">
+      </div>
+    </div>
 
-  <input type="text" name="name" placeholder="naam">
-  <input type="text" name="address" placeholder="adres">
-  <input type="text" name="postal" placeholder="postcode">
+    <ul class="form-row materials">
+      <label for="validationDefault08">Materialen</label>
+      <li id="validationDefault08" class="col-md-12 mb-1">
+        <div class="form-row">
+          <div class="col-md-6">
+            <input class="form-control material disable_for_static" type="text" name="materials[name]" placeholder="Materiaal naam">
+          </div>
+          <div class="col-md-6">
+            <input class="form-control price disable_for_static" type="text" name="materials[price]" placeholder="Materiaal prijs">
+          </div>
+        </div>
+      </li>
+      <li> <!-- sending along empty hidden li to force materials.name and materials.price to be an array even with only 1 material -->
+        <div class="form-row">
+          <div class="col-md-6">
+            <input class="material disable_for_static" type="hidden" name="materials[name]" value="">
+          </div>
+          <div class="col-md-6">
+            <input class="price disable_for_static" type="hidden" name="materials[price]" value="">
+          </div>
+        </div>
+      </li>
+    </ul>
+    <button id="addMaterial" class="btn btn-info disable_for_static">+ meer materialen</button>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="vatSelect">BTW %</label>
+        <select class="custom-select" id="vatSelect" name="vat" required>
+          <option value="">Selecteer BTW %</option>
+          <option value="9">9%</option>
+          <option value="21">21%</option>
+        </select>
+      </div>
+    </div>
 
-  <input type="date" name="date">
-  <input type="date" name="enddate">
-
-  <input type="text" name="description" placeholder="omschrijving">
-
-  <input class="disable_for_static" type="text" name="hours" placeholder="uren">
-  <input class="disable_for_static" type="text" name="hourly" placeholder="per uur">
-
-  <ul class="materials">
-    <li>
-      <input class="material disable_for_static" type="text" name="materials[name]" placeholder="materiaal">
-      <input class="price disable_for_static" type="text" name="materials[price]" placeholder="prijs">
-      <button class="removeMaterial disable_for_static">-</button>
-    </li>
-    <li> <!-- sending along empty hidden li to force materials.name and materials.price to be an array even with only 1 material -->
-      <input class="material disable_for_static" type="hidden" name="materials[name]" value="">
-      <input class="price disable_for_static" type="hidden" name="materials[price]" value="">
-      <button class="removeMaterial disable_for_static">-</button>
-    </li>
-  </ul>
-  <button id="addMaterial" class="disable_for_static">+</button>
-
-  <select name="vat">
-    <option value="null">BTW %</option>
-    <option value="9">9%</option>
-    <option value="21">21%</option>
-  </select>
-
-  <input id="staticPriceCb" type="checkbox" value="true">
-  <input id="staticPrice" type="text" name="staticPriceSubtotal" disabled>
-
-  <input type="submit" value="Maak">
-</form>
+    <button class="btn btn-primary" type="submit">Maak Factuur</button>
+  </form>
+</div>
 
 <%- include('../partials/footer.ejs') %>

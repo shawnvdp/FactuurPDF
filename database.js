@@ -40,8 +40,9 @@ async function addInvoiceToDb(body) {
       // add to invoice table
       await query(`INSERT INTO invoice (invoiceNumber, name, address, postal, date, enddate, description, hours, hourly, vat, hoursPrice, subtotal, vatPrice, total) VALUES ('${invoice_number}', '${name}', '${address}', '${postal}', '${date}', '${enddate}', '${description}', '${hours}', '${hourly}', '${vat}', ${hoursPrice}, '${subtotal}', '${vatPrice}', '${total}');`);
     }
-
-    updateMaterials(invoice_number, materials);
+    if (materials) {
+      updateMaterials(invoice_number, materials);
+    }
   } catch (err) {
     if (err) throw err;
   }
@@ -69,7 +70,9 @@ async function updateInvoice(body, callback) {
       await queryO("UPDATE invoice SET ?  WHERE ?", [{ invoiceNumber: invoice_number, name, address, postal, date, enddate, description, hours, hourly, vat, hoursPrice, subtotal, vatPrice, total }, { id }]);
       await deleteOldMaterials(oldInvoiceNumber);
       await deleteMaterials(invoice_number);
-      await updateMaterials(invoice_number, materials);
+      if (materials.name.length) {
+        await updateMaterials(invoice_number, materials);
+      }
       callback();
     }
   } catch (err) {
@@ -120,35 +123,42 @@ function getInvoicePriceHours(hours, hourly, materials, vat) {
   let hoursPrice = hours * hourly;
 
   let currency_hoursPrice = currency(hoursPrice);
+  currency_hoursPrice = currency((Math.round(currency_hoursPrice.value * 100) / 100).toFixed(2));
   // console.log(`hours: ${currency_hoursPrice.value} ========== (${hours} * ${hourly})`);
 
-  let currency_array = materials.price.map(price => currency(price).value);
-  let matsPrice = currency_array.reduce((acc, currentValue) => acc + currentValue);
+  let matsPrice = 0;
+  if (Array.isArray(materials.name)) {
+    let currency_array = materials.price.map(price => currency(price).value);
+    matsPrice = currency_array.reduce((acc, currentValue) => acc + currentValue);
+  }
 
   // console.log(`materials: ${matsPrice} ========== (${materials.price})`);
   let subtotal = currency_hoursPrice.add(matsPrice);
+  subtotal = currency((Math.round(subtotal.value * 100) / 100).toFixed(2));
 
   // console.log(`subtotal: ${subtotal.value} ========== (${currency_hoursPrice.value} + ${matsPrice})`);
 
   let vatPrice = currency((subtotal / 100) * parseInt(vat));
+  vatPrice = currency((Math.round(vatPrice.value * 100) / 100).toFixed(2));
   // console.log(`vat: ${vatPrice.value} ========== ((${subtotal}/100) * ${vat})`);
 
   let total = subtotal.add(vatPrice);
-  total = (Math.round(total.value * 100) / 100).toFixed(2); //force 2 decimals even if even number
+  total = currency((Math.round(total.value * 100) / 100).toFixed(2)); //force 2 decimals even if even number
   // console.log(`total: ${total.value} ========== (${subtotal.value} + ${vatPrice.value})`);
 
-  return { hoursPrice: currency_hoursPrice.value, subtotal: subtotal.value, vatPrice: vatPrice.value, total };
+  return { hoursPrice: currency_hoursPrice.value, subtotal: subtotal.value, vatPrice: vatPrice.value, total: total.value };
 }
 
 function getInvoicePriceStatic(subtotal, vat) {
   let vatPrice = currency((subtotal / 100) * parseInt(vat));
+  vatPrice = currency((Math.round(vatPrice.value * 100) / 100).toFixed(2));
   // console.log(`vat: ${vatPrice.value} ========== ((${subtotal}/100) * ${vat})`);
 
   let total = currency(subtotal).add(vatPrice);
-  total = (Math.round(total.value * 100) / 100).toFixed(2); //force 2 decimals even if even number
+  total = currency((Math.round(total.value * 100) / 100).toFixed(2)); //force 2 decimals even if even number
   // console.log(`total: ${total.value} ========== (${subtotal.value} + ${vatPrice.value})`);
 
-  return { vatPrice: vatPrice.value, total: total };
+  return { vatPrice: vatPrice.value, total: total.value };
 }
 
 module.exports = { query, updateInvoice, addInvoiceToDb };

@@ -1,10 +1,8 @@
 <%- include('partials/header_index.ejs') %>
 
-<h1>HOME</h1>
-
-<a href="/invoice/new">NEW</a>
-
 <div class="container">
+  <a class="newBtn" href="/invoice/new"><i class="fa fa-plus"></i>Nieuwe Factuur</a>
+  <h1 class="index_header">Facturen</h1>
   <div class="flex flex-col">
   <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
     <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
@@ -46,13 +44,13 @@
                  <%= invoice.enddate %>
               </td>
               <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+              € <%= invoice.vatPrice %>
+                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 mx-2">
                   9%
                 </span>
-                BTW
               </td>
               <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                Totaal
+                € <%= invoice.total %>
               </td>
               <td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
                 <a href="/invoice/<%= invoice.invoiceNumber %>/edit" class="text-indigo-600 hover:text-indigo-900">Bewerken</a>

@@ -37,7 +37,7 @@ function sanitize(req, res, next) {
   if (req.body.hourly) {
     req.body.hourly = req.body.hourly.replace(/€| |,/g, matched => mapObj[matched]);
   }
-  if (req.body.materials.price.length > 1) {
+  if (req.body.materials && req.body.materials.price.length > 1) {
     req.body.materials.price = req.body.materials.price.map(n => n.replace(/€| |,/g, matched => mapObj[matched]));
   }
   next();
@@ -99,7 +99,7 @@ app.get("/invoice/:id/edit", async (req, res) => {
 //UPDATE
 app.put("/invoice/:id", sanitize, (req, res) => {
   updateInvoice(req.body, () => {
-    res.redirect(`/invoice/${req.body.invoice_number}`);
+    res.redirect("/");
   });
 });
 

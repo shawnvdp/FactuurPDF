@@ -97,9 +97,9 @@
             </div>
           </div>
           <div class="materials pl-20 pb-30">
-            <h4>Materialen</h4>
-            <ul>
-              <% if (materials.length) { %>
+            <% if (materials.length) { %>
+              <h4>Materialen</h4>
+              <ul>
                 <% for(let i = 0; i < materials.length; i++){ %>
                   <li class="pricing_row">
                     <div class="pricing_row_item">
@@ -113,8 +113,8 @@
                     </div>
                   </li>
                 <% } %>
-              <% } %>
-            </ul>
+              </ul>
+            <% } %>
           </div>
         </div>
         <div class="invoice_price">

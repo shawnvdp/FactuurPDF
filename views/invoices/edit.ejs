@@ -1,67 +1,127 @@
-<%- include('../partials/header.ejs') %>
+<%- include('../partials/header_forms.ejs') %>
 
-<h1>EDIT</h1>
+<a class="homeBtn" href="/"><i class="fa fa-chevron-left"></i> Terug naar Home</a>
 
-<h5>/invoice/<%= id %></h5>
+<div class="container">
+  <h1 class="form_header">Bewerk factuur <%= invoice.invoiceNumber %></h1>
+  <form action="/invoice/<%= id %>?_method=PUT" method="POST">
+    <div class="form-row">
+      <div class="col-md-2 mb-3">
+        <label for="factuurNummer">Factuurnummer</label>
+        <input value="<%= invoice.invoiceNumber %>" type="number" class="form-control" name="invoice_number" id="factuurNummer" placeholder="Factuurnummer" required>
+      </div>
+      <div class="col-md-2 mb-3">
+        <label for="staticPriceCb">Aangenomen bedrag?</label>
+        <% if (invoice.hoursPrice == "0" || invoice.hoursPrice == null) { %>
+          <input class="form-control" id="staticPriceCb" type="checkbox" value="true" checked>
+        <% } else { %>
+          <input class="form-control" id="staticPriceCb" type="checkbox" value="true">
+        <% } %>
+      </div>
+      <div class="col-md-2 mb-3">
+        <label for="staticPrice">Aangenomen bedrag</label>
+        <% if (invoice.hoursPrice == "0" || invoice.hoursPrice == null) { %>
+          <input value="<%= invoice.subtotal %>" class="form-control" id="staticPrice" type="text" name="staticPriceSubtotal" placeholder="Bedrag">
+        <% } else { %>
+          <input class="form-control" id="staticPrice" type="text" name="staticPriceSubtotal" placeholder="Bedrag" disabled>
+        <% } %>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-4 mb-3">
+        <label for="validationDefault01">Naam</label>
+        <input value="<%= invoice.name %>" type="text" class="form-control" name="name" id="validationDefault01" placeholder="Naam" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="validationDefault02">Adres</label>
+        <input value="<%= invoice.address %>" type="text" class="form-control" name="address" id="validationDefault02" placeholder="Adres" required>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="validationDefault02">Postcode</label>
+        <input value="<%= invoice.postal %>" type="text" class="form-control" name="postal" id="validationDefault02" placeholder="Postcode" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault03">Begindatum</label>
+        <input value="<%= invoice.date %>" type="date" class="form-control" name="date" id="validationDefault03" required>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault04">Einddatum</label>
+        <input value="<%= invoice.enddate %>" type="date" class="form-control" name="enddate" id="validationDefault04" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="validationDefault05">Omschrijving</label>
+        <input value="<%= invoice.description %>" type="text" class="form-control" name="description" id="validationDefault05" placeholder="Omschrijving" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault06">Aantal uren</label>
+        <input value="<%= invoice.hours %>" type="text" class="form-control disable_for_static" name="hours" id="validationDefault06" placeholder="Aantal uren">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="validationDefault07">€ per uur</label>
+        <input value="<%= invoice.hourly %>" type="text" class="form-control disable_for_static" name="hourly" id="validationDefault07" placeholder="€ per uur">
+      </div>
+    </div>
 
-<form action="/invoice/<%= id %>?_method=PUT" method="POST">
-  <input type="number" name="invoice_number" placeholder="Factuurnummer" value="<%= invoice.invoiceNumber %>">
+    <ul class="form-row materials">
+      <label>Materialen</label>
+      <% materials.forEach(material => { %>
+        <% if (invoice.hoursPrice == "0" || invoice.hoursPrice == null) { %>
+          <li class="col-md-12 mb-1">
+            <div class="form-row">
+              <div class="col-md-6">
+                <input value="<%= material.name %>" disabled class="form-control material disable_for_static" type="text" name="materials[name]" placeholder="Materiaal naam">
+              </div>
+              <div class="col-md-6">
+                <input value="<%= material.price %>" disabled class="form-control price disable_for_static" type="text" name="materials[price]" placeholder="Materiaal prijs">
+              </div>
+            </div>
+          </li>
+          <% } else { %>
+          <li class="col-md-12 mb-1">
+            <div class="form-row">
+              <div class="col-md-6">
+                <input value="<%= material.name %>" class="form-control material disable_for_static" type="text" name="materials[name]" placeholder="Materiaal naam">
+              </div>
+              <div class="col-md-6">
+                <input value="<%= material.price %>" class="form-control price disable_for_static" type="text" name="materials[price]" placeholder="Materiaal prijs">
+              </div>
+            </div>
+          </li>
+          <% } %>
+        <% }) %>
+          <li> <!-- sending along empty hidden li to force materials.name and materials.price to be an array even with only 1 material -->
+            <div class="form-row">
+              <div class="col-md-6">
+                <input class="material disable_for_static" type="hidden" name="materials[name]" value="">
+              </div>
+              <div class="col-md-6">
+                <input class="price disable_for_static" type="hidden" name="materials[price]" value="">
+              </div>
+            </div>
+          </li>
+    </ul>
+    <button id="addMaterial" class="btn btn-info disable_for_static">+ meer materialen</button>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="vatSelect">BTW %</label>
+        <select data-option="<%= invoice.vat %>" class="custom-select" id="vatSelect" name="vat" required>
+          <option value="">Selecteer BTW %</option>
+          <option value="9">9%</option>
+          <option value="21">21%</option>
+        </select>
+      </div>
+    </div>
 
-  <input type="text" name="name" placeholder="naam" value="<%= invoice.name %>">
-  <input type="text" name="address" placeholder="adres" value="<%= invoice.address %>">
-  <input type="text" name="postal" placeholder="postcode" value="<%= invoice.postal %>">
+    <input type="text" name="id" value="<%= invoice.id %>" hidden> <!-- row in db -->
 
-  <input type="date" name="date" value="<%= invoice.date %>">
-  <input type="date" name="enddate" value="<%= invoice.enddate %>">
-
-  <input type="text" name="description" placeholder="omschrijving" value="<%= invoice.description %>">
-
-  <input type="text" name="hours" placeholder="uren" value="<%= invoice.hours %>">
-  <input type="text" name="hourly" placeholder="per uur" value="<%= invoice.hourly %>">
-
-  <ul class="materials">
-  <% materials.forEach(material => { %>
-    <% if (invoice.hoursPrice == "0" || invoice.hoursPrice == null) { %>
-    <li>
-        <input class="material" type="text" name="materials[name]" placeholder="materiaal" value="<%= material.name %>" disabled>
-        <input class="price" type="text" name="materials[price]" placeholder="prijs" value="<%= material.price %>" disabled>
-        <button class="removeMaterial" disabled>-</button>
-    </li>
-    <% } else { %>
-    <li>
-        <input class="material" type="text" name="materials[name]" placeholder="materiaal" value="<%= material.name %>">
-        <input class="price" type="text" name="materials[price]" placeholder="prijs" value="<%= material.price %>">
-        <button class="removeMaterial">-</button>
-    </li>
-    <% } %>
-      
-  <% }) %>
-    <li> <!-- sending along empty hidden li to force materials.name and materials.price to be an array even with only 1 material -->
-      <input class="material disable_for_static" type="hidden" name="materials[name]" value="">
-      <input class="price disable_for_static" type="hidden" name="materials[price]" value="">
-      <button class="removeMaterial disable_for_static">-</button>
-    </li>
-  </ul>
-  <button id="addMaterial">+</button>
-
-  <select id="vatDropdown" name="vat" data-option="<%= invoice.vat %>">
-    <option value="null">BTW %</option>
-    <option value="9">9%</option>
-    <option value="21">21%</option>
-  </select>
-
-  <% if (invoice.hoursPrice == "0" || invoice.hoursPrice == null) { %>
-    <input id="staticPriceCb" type="checkbox" value="true" checked>
-    <input id="staticPrice" type="text" name="staticPriceSubtotal" value="<%= invoice.subtotal %>">
-  <% } else { %>
-    <input id="staticPriceCb" type="checkbox" value="true">
-    <input id="staticPrice" type="text" name="staticPriceSubtotal" disabled>
-  <% } %>
-  
-
-  <input type="text" name="id" value="<%= invoice.id %>" hidden>
-
-  <input type="submit" value="Update">
-</form>
+    <button class="btn btn-primary" type="submit">Update Factuur</button>
+  </form>
+</div>
 
 <%- include('../partials/footer.ejs') %>

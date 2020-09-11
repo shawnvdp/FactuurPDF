@@ -1,5 +1,8 @@
 * {
   font-family: 'Roboto', sans-serif;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .invoice_table_row:hover {
@@ -11,6 +14,33 @@
   max-width: 90rem;
   margin-left: auto;
   margin-right: auto;
+}
+
+.newBtn {
+  border: 5px solid transparent;
+  background: rgb(88,80,236);
+  width: fit-content;
+  padding: 10px;
+  color: rgb(243, 243, 243);
+  border-radius: 8px;
+  font-weight: 500;
+  margin: 25px auto;
+  letter-spacing: 0.01em;
+}
+
+.fa-plus {
+  padding-right: 10px;
+}
+
+.newBtn:hover {
+  background-color: #362f78;
+}
+
+.index_header {
+  font-weight: 500;
+  color:  rgb(22,30,46);
+  margin-bottom: 10px;
+  font-size: 1.2em;
 }
 
 a {

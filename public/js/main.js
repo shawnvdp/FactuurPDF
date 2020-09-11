@@ -12,7 +12,7 @@
     });
   }
 
-  let vatDropdown = document.querySelector("#vatDropdown");
+  let vatDropdown = document.querySelector("#vatSelect");
 
   if (vatDropdown) {
     let vat = vatDropdown.dataset.option;
@@ -34,6 +34,17 @@
 
 })();
 
+{/* <li id="validationDefault08" class="col-md-12 mb-3">
+  <div class="form-row">
+    <div class="col-md-6">
+      <input class="form-control material disable_for_static" type="text" name="materials[name]" placeholder="Materiaal naam">
+    </div>
+    <div class="col-md-6">
+      <input class="form-control price disable_for_static" type="text" name="materials[price]" placeholder="Materiaal prijs">
+    </div>
+  </div>
+</li> */}
+
 function bindEventListeners() {
   let addMatBtn = document.querySelector("#addMaterial");
   let matUl = document.querySelector("ul.materials");
@@ -42,9 +53,16 @@ function bindEventListeners() {
       event.preventDefault();
       event.stopPropagation();
       let node = document.createElement("li");
-      node.innerHTML = "<input class='material' type='text' name='materials[name]' placeholder='materiaal'> <input class='price' type='text' name='materials[price]' placeholder='prijs'> <button class='removeMaterial'>-</button>";
+      node.classList.add("col-md-12", "mb-1");
+      node.innerHTML = `<div class="form-row">
+                          <div class="col-md-6">
+                            <input class="form-control material disable_for_static" type="text" name="materials[name]" placeholder="Materiaal naam">
+                          </div>
+                          <div class="col-md-6">
+                            <input class="form-control price disable_for_static" type="text" name="materials[price]" placeholder="Materiaal prijs">
+                          </div>
+                        </div>`;
       matUl.appendChild(node);
-      bindEventListeners();
     });
   }
 
