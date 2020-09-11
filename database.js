@@ -134,9 +134,10 @@ function getInvoicePriceHours(hours, hourly, materials, vat) {
   // console.log(`vat: ${vatPrice.value} ========== ((${subtotal}/100) * ${vat})`);
 
   let total = subtotal.add(vatPrice);
+  total = (Math.round(total.value * 100) / 100).toFixed(2); //force 2 decimals even if even number
   // console.log(`total: ${total.value} ========== (${subtotal.value} + ${vatPrice.value})`);
 
-  return { hoursPrice: currency_hoursPrice.value, subtotal: subtotal.value, vatPrice: vatPrice.value, total: total.value };
+  return { hoursPrice: currency_hoursPrice.value, subtotal: subtotal.value, vatPrice: vatPrice.value, total };
 }
 
 function getInvoicePriceStatic(subtotal, vat) {
@@ -144,9 +145,10 @@ function getInvoicePriceStatic(subtotal, vat) {
   // console.log(`vat: ${vatPrice.value} ========== ((${subtotal}/100) * ${vat})`);
 
   let total = currency(subtotal).add(vatPrice);
+  total = (Math.round(total.value * 100) / 100).toFixed(2); //force 2 decimals even if even number
   // console.log(`total: ${total.value} ========== (${subtotal.value} + ${vatPrice.value})`);
 
-  return { vatPrice: vatPrice.value, total: total.value };
+  return { vatPrice: vatPrice.value, total: total };
 }
 
 module.exports = { query, updateInvoice, addInvoiceToDb };

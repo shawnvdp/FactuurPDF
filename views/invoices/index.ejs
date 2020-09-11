@@ -124,13 +124,13 @@
                 <p>Subtotaal</p>
                 <p>:</p>
                 <p class="align-center">EUR</p>
-                <p class="align-end">2626,40</p>
+                <p class="align-end"><%= invoice.subtotal %></p>
               </div>
               <div class="vat">
-                <p>BTW 9%</p>
+                <p>BTW <%= invoice.vat %>%</p>
                 <p>:</p>
                 <p class="align-center">EUR</p>
-                <p class="align-end">236,38</p>
+                <p class="align-end"><%= invoice.vatPrice %></p>
               </div>
             </div>
             <div class="invoice_price_total">
@@ -138,7 +138,7 @@
                 <p>Totaal te voldoen</p>
                 <p>:</p>
                 <p class="align-center">EUR</p>
-                <p class="align-end">2862,78</p>
+                <p class="align-end"><%= invoice.total %></p>
               </div>
             </div>
           </div>
@@ -153,11 +153,11 @@
         </div>
         <div class="display">
           <h5>Factuurnummer</h5>
-          <p>0000149</p>
+          <p><%= invoice.invoiceNumber %></p>
         </div>
         <div class="display">
           <h5>Factuurbedrag in EUR</h5>
-          <p>2862,78</p>
+          <p><%= invoice.total %></p>
         </div>
       </div>
       <div class="payment_message">
