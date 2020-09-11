@@ -32,16 +32,18 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
           <% invoices.forEach(invoice => { %>
-            <tr class="invoice_table_row" data-href="http://localhost:3000/invoice/<%= invoice.id %>">
+            <tr class="invoice_table_row" data-href="http://localhost:3000/export/<%= invoice.invoiceNumber %>">
               <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                <%= invoice.id %>
+                <%= invoice.invoiceNumber %>
               </td>
               <td class="px-6 py-4 whitespace-no-wrap">
                 <div class="text-sm leading-5 text-gray-900"><%= invoice.name %></div>
                 <div class="text-sm leading-5 text-gray-500"><%= invoice.address %>, <%= invoice.postal %></div>
               </td>
               <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
-                <%= invoice.date %> - <%= invoice.enddate %>
+                <%= invoice.date %>
+                 - 
+                 <%= invoice.enddate %>
               </td>
               <td class="px-6 py-4 whitespace-no-wrap text-sm leading-5 text-gray-500">
                 <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
@@ -53,8 +55,8 @@
                 Totaal
               </td>
               <td class="px-6 py-4 whitespace-no-wrap text-right text-sm leading-5 font-medium">
-                <a href="/invoice/<%= invoice.id %>/edit" class="text-indigo-600 hover:text-indigo-900">Bewerken</a>
-                <a href="/invoice/<%= invoice.id %>?reminder=true" class="text-indigo-600 hover:text-indigo-900">Herinnering</a>
+                <a href="/invoice/<%= invoice.invoiceNumber %>/edit" class="text-indigo-600 hover:text-indigo-900">Bewerken</a>
+                <a href="/export/<%= invoice.invoiceNumber %>?reminder=true" class="text-indigo-600 hover:text-indigo-900">Herinnering</a>
               </td>
             </tr>
           <% }) %>
@@ -68,29 +70,5 @@
   </div>
 </div>
 </div>
-
-<div class="container">
-  <table cellspacing="0" cellpadding="0">
-    <thead>
-      <tr>
-        <th>Nummer</th>
-        <th>Naam</th>
-        <th>Adres</th>
-        <th>Postcode</th>
-      </tr>
-    </thead>
-    <tbody>
-    <% invoices.forEach(invoice => { %>
-      <tr class="invoice_table_row" data-href="http://localhost:3000/invoice/<%= invoice.id %>">
-        <td><%= invoice.id %></td>
-        <td><%= invoice.name %></td>
-        <td><%= invoice.address %></td>
-        <td><%= invoice.postal %></td>
-      </tr>
-    <% }) %>
-    </tbody>
-  </table>
-</div>
-
 
 <%- include('partials/footer.ejs') %>

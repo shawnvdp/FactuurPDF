@@ -1,10 +1,5 @@
 <%- include('../partials/header.ejs') %>
 
-<!--<div class="test">
-  <h5><%= formData %></h5>
-  <div class="fifty">
-</div> -->
-
 <!-- IF hoursPrice != "0", render hours block -->
 <!-- IF reminder, render HERINNERING block -->
 
@@ -58,9 +53,9 @@
           <% } %>
         </h2>
         <ul class="sender_data">
-          <li>J. Iedema</li>
-          <li>Bevrijdingslaan 1C</li>
-          <li>9102 DC Dokkum</li>
+          <li><%= invoice.name %></li>
+          <li><%= invoice. address%></li>
+          <li><%= invoice.postal %></li>
         </ul>
       </div>
       <div class="invoice_info">
@@ -71,9 +66,9 @@
           <li>Vervaldatum:</li>
         </ul>
         <ul class="invoice_data">
-          <li>25-08-2020</li>
-          <li>0000149</li>
-          <li>02-09-2020</li>
+          <li><%= invoice.date %></li>
+          <li><%= invoice.invoiceNumber %></li>
+          <li><%= invoice.enddate %></li>
         </ul>
       </div>
     </div>
@@ -85,168 +80,40 @@
             <h4>Bedrag EUR</h4>
           </div>
           <div class="description pl-20 pb-30">
-            <p>Verrichten van schilderwerkzaamheden aan woning Bedrijdingslaan 1C Dokkum.</p>
+            <p><%= invoice.description %></p>
           </div>
           <div class="hours pl-20 pb-30">
             <h4>Aantal uren</h4>
             <div class="pricing_row">
               <div class="pricing_row_item">
-                <p>71¾ x €32,50 p.u.</p>
+                <p><%= invoice.hours %> x €<%= invoice.hourly %> p.u.</p>
               </div>
               <div class="pricing_row_euro">
                 <p>€</p>
               </div>
               <div class="pricing_row_price">
-                <p>2315,63</p>
+                <p><%= invoice.hoursPrice %></p>
               </div>
             </div>
           </div>
           <div class="materials pl-20 pb-30">
             <h4>Materialen</h4>
             <ul>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
-              <li class="pricing_row">
-                <div class="pricing_row_item">
-                  <p>3L Wijzonol Dekkend halfglans 9001</p>
-                </div>
-                <div class="pricing_row_euro">
-                  <p>€</p>
-                </div>
-                <div class="pricing_row_price">
-                  <p>148,86</p>
-                </div>
-              </li>
+              <% if (materials.length) { %>
+                <% for(let i = 0; i < materials.length; i++){ %>
+                  <li class="pricing_row">
+                    <div class="pricing_row_item">
+                      <p><%= materials[i].name %></p>
+                    </div>
+                    <div class="pricing_row_euro">
+                      <p>€</p>
+                    </div>
+                    <div class="pricing_row_price">
+                      <p><%= materials[i].price %></p>
+                    </div>
+                  </li>
+                <% } %>
+              <% } %>
             </ul>
           </div>
         </div>

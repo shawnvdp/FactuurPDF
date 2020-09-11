@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 const { query, updateInvoice, addInvoiceToDb } = require("./database");
 const connection = require("./db");
+const { DDMMYYYYToYYYYMMDD, formatInvoiceId } = require("./util");
 
 connection.connect();
 
@@ -23,20 +24,6 @@ app.use(methodOverride("_method"));
 
 app.use(expressSanitizer());
 
-
-app.get("/", async (req, res) => {
-  let invoices = await query("SELECT * FROM invoice");
-  res.render("index", { invoices });
-});
-
-// ** INVOICE **
-
-//NEW FORM
-app.get("/invoice/new", (req, res) => {
-  res.render("invoices/new");
-});
-
-
 function sanitize(req, res, next) {
   const mapObj = {
     "€": "",
@@ -50,11 +37,23 @@ function sanitize(req, res, next) {
   if (req.body.hourly) {
     req.body.hourly = req.body.hourly.replace(/€| |,/g, matched => mapObj[matched]);
   }
-  if (req.body.materials) {
+  if (req.body.materials.price.length > 1) {
     req.body.materials.price = req.body.materials.price.map(n => n.replace(/€| |,/g, matched => mapObj[matched]));
   }
   next();
 }
+
+app.get("/", async (req, res) => {
+  let invoices = await query("SELECT * FROM invoice");
+  res.render("index", { invoices });
+});
+
+// ** INVOICE **
+
+//NEW FORM
+app.get("/invoice/new", (req, res) => {
+  res.render("invoices/new");
+});
 
 //CREATE
 app.post("/invoice", sanitize, async (req, res) => {
@@ -68,37 +67,44 @@ app.post("/invoice", sanitize, async (req, res) => {
 
 //READ
 app.get("/invoice/:id", async (req, res) => {
-  let result = await query(`SELECT * FROM invoices.invoice WHERE id = ${req.params.id}`);
-
-  if (!result.length) {
-    res.redirect("/");
-    throw new Error(`No result found in database for id: ${req.params.id}`);
-  }
-
-  res.render("invoices/index", { formData: result, reminder: req.query.reminder });
-});
-
-//EDIT FORM
-app.get("/invoice/:id/edit", async (req, res) => {
-  let invoice = await query(`SELECT * FROM invoices.invoice WHERE id = ${req.params.id}`);
-  let materials = await query(`SELECT materials.* FROM invoice INNER JOIN invoice_materials im ON im.invoice_id = invoice.id INNER JOIN materials ON im.materials_id = materials.id AND invoice.id = ${req.params.id}`);
+  let invoice = await query(`SELECT * FROM invoices.invoice WHERE invoiceNumber = ${req.params.id}`);
+  let materials = await query(`SELECT materials.* FROM invoice INNER JOIN invoice_materials im ON im.invoice_id = invoice.invoiceNumber INNER JOIN materials ON im.materials_id = materials.id AND invoice.invoiceNumber = ${req.params.id}`);
 
   if (!invoice.length) {
     res.redirect("/");
     throw new Error(`No result found in database for id: ${req.params.id}`);
   }
 
+  invoice[0].invoiceNumber = formatInvoiceId(invoice[0].invoiceNumber);
+
+  res.render("invoices/index", { invoice: invoice[0], materials, reminder: req.query.reminder, id: req.body.id });
+});
+
+//EDIT FORM
+app.get("/invoice/:id/edit", async (req, res) => {
+  let invoice = await query(`SELECT * FROM invoices.invoice WHERE invoiceNumber = ${req.params.id}`);
+  let materials = await query(`SELECT materials.* FROM invoice INNER JOIN invoice_materials im ON im.invoice_id = invoice.invoiceNumber INNER JOIN materials ON im.materials_id = materials.id AND invoice.invoiceNumber = ${req.params.id}`);
+
+  if (!invoice.length) {
+    res.redirect("/");
+    throw new Error(`No result found in database for id: ${req.params.id}`);
+  }
+
+  invoice[0].date = DDMMYYYYToYYYYMMDD(invoice[0].date);
+  invoice[0].enddate = DDMMYYYYToYYYYMMDD(invoice[0].enddate);
+
   res.render("invoices/edit", { invoice: invoice[0], materials, id: req.params.id });
 });
 
 //UPDATE
-app.put("/invoice/:id", sanitize, async (req, res) => {
-  updateInvoice(req.body);
-  res.redirect(`/invoice/${req.params.id}`);
+app.put("/invoice/:id", sanitize, (req, res) => {
+  updateInvoice(req.body, () => {
+    res.redirect(`/invoice/${req.body.invoice_number}`);
+  });
 });
 
 app.get("/export/:id", (req, res) => {
-  constructPDF(req.params.id)
+  constructPDF(req.params.id, req.query.reminder)
     .then(pdf => {
       res.set({
         "Content-Type": "application/pdf",
@@ -111,13 +117,19 @@ app.get("/export/:id", (req, res) => {
 
 app.listen(PORT, () => console.log(`server listening on port ${PORT}`));
 
-async function constructPDF(id) {
+async function constructPDF(id, reminder) {
   const browser = await puppeteer.launch({
     args: ["--no-sandbox"],
     headless: true
   });
   const page = await browser.newPage();
-  await page.goto(`http://localhost:3000/invoice/${id}`, { waitUntil: "networkidle0" });
+
+  if (reminder) {
+    await page.goto(`http://localhost:3000/invoice/${id}?reminder=true`, { waitUntil: "networkidle0" });
+  } else {
+    await page.goto(`http://localhost:3000/invoice/${id}`, { waitUntil: "networkidle0" });
+  }
+
   const pdf = await page.pdf({
     format: "A4", printBackground: true
   });

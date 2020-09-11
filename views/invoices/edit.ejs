@@ -5,7 +5,7 @@
 <h5>/invoice/<%= id %></h5>
 
 <form action="/invoice/<%= id %>?_method=PUT" method="POST">
-  <input type="number" name="invoice_number" placeholder="Factuurnummer" value="<%= invoice.id %>">
+  <input type="number" name="invoice_number" placeholder="Factuurnummer" value="<%= invoice.invoiceNumber %>">
 
   <input type="text" name="name" placeholder="naam" value="<%= invoice.name %>">
   <input type="text" name="address" placeholder="adres" value="<%= invoice.address %>">
@@ -58,6 +58,9 @@
     <input id="staticPrice" type="text" name="staticPriceSubtotal" disabled>
   <% } %>
   
+
+  <input type="text" name="id" value="<%= invoice.id %>" hidden>
+
   <input type="submit" value="Update">
 </form>
 

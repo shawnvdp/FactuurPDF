@@ -1,5 +1,6 @@
 const connection = require("./db");
 const currency = require("currency.js");
+const { YYYYMMDDToDDMMYYYY } = require("./util");
 
 async function query(queryString) {
   return new Promise((resolve, reject) => {
@@ -20,21 +21,24 @@ async function queryO(queryString, queryOptions) {
 }
 
 async function addInvoiceToDb(body) {
-  let { invoice_number, name, address, postal, date, enddate, description, hours, hourly, materials, vat, staticPriceSubtotal, reminder } = body;
+  let { invoice_number, name, address, postal, date, enddate, description, hours, hourly, materials, vat, staticPriceSubtotal } = body;
 
   //only add if unique id
   let idExists = await query(`SELECT * FROM invoice WHERE id = ${invoice_number}`);
   if (idExists.length) return false;
 
+  date = YYYYMMDDToDDMMYYYY(date);
+  enddate = YYYYMMDDToDDMMYYYY(enddate);
+
   try {
     if (staticPriceSubtotal) {
       //no hours, no hourly, no materials -> only (passed in subtotal / 100) * vat
       let { vatPrice, total } = getInvoicePriceStatic(staticPriceSubtotal, vat);
-      await query(`INSERT INTO invoice (id, name, address, postal, date, enddate, description, vat, subtotal, vatPrice, total) VALUES ('${invoice_number}', '${name}', '${address}', '${postal}', '${date}', '${enddate}', '${description}', '${vat}', '${staticPriceSubtotal}', '${vatPrice}', '${total}');`);
+      await query(`INSERT INTO invoice (invoiceNumber, name, address, postal, date, enddate, description, vat, subtotal, vatPrice, total) VALUES ('${invoice_number}', '${name}', '${address}', '${postal}', '${date}', '${enddate}', '${description}', '${vat}', '${staticPriceSubtotal}', '${vatPrice}', '${total}');`);
     } else {
       let { hoursPrice, subtotal, vatPrice, total } = getInvoicePriceHours(hours, hourly, materials, vat);
       // add to invoice table
-      await query(`INSERT INTO invoice (id, name, address, postal, date, enddate, description, hours, hourly, vat, hoursPrice, subtotal, vatPrice, total) VALUES ('${invoice_number}', '${name}', '${address}', '${postal}', '${date}', '${enddate}', '${description}', '${hours}', '${hourly}', '${vat}', ${hoursPrice}, '${subtotal}', '${vatPrice}', '${total}');`);
+      await query(`INSERT INTO invoice (invoiceNumber, name, address, postal, date, enddate, description, hours, hourly, vat, hoursPrice, subtotal, vatPrice, total) VALUES ('${invoice_number}', '${name}', '${address}', '${postal}', '${date}', '${enddate}', '${description}', '${hours}', '${hourly}', '${vat}', ${hoursPrice}, '${subtotal}', '${vatPrice}', '${total}');`);
     }
 
     updateMaterials(invoice_number, materials);
@@ -45,20 +49,28 @@ async function addInvoiceToDb(body) {
   return true;
 }
 
-async function updateInvoice(body) {
-  let { invoice_number, name, address, postal, date, enddate, description, hours, hourly, materials, vat, staticPriceSubtotal } = body;
+async function updateInvoice(body, callback) {
+  let { id, invoice_number, name, address, postal, date, enddate, description, hours, hourly, materials, vat, staticPriceSubtotal } = body;
+
+  date = YYYYMMDDToDDMMYYYY(date);
+  enddate = YYYYMMDDToDDMMYYYY(enddate);
 
   try {
+    //old invoice number (if changed), need it to delete potential materials from old invoice id
+    let row = await query(`SELECT * FROM invoices.invoice WHERE id = ${id}`);
+    let oldInvoiceNumber = row[0].invoiceNumber;
     if (staticPriceSubtotal) {
       //no hours, no hourly, no materials -> only (passed in subtotal / 100) * vat
       let { vatPrice, total } = getInvoicePriceStatic(staticPriceSubtotal, vat);
-      await queryO("UPDATE invoice SET ?  WHERE ?", [{ name, address, postal, date, enddate, description, vat, subtotal: staticPriceSubtotal, vatPrice, total }, { id: invoice_number }]);
+      await queryO("UPDATE invoice SET ?  WHERE ?", [{ invoiceNumber: invoice_number, name, address, postal, date, enddate, description, vat, subtotal: staticPriceSubtotal, vatPrice, total }, { id }]);
     } else {
       let { hoursPrice, subtotal, vatPrice, total } = getInvoicePriceHours(hours, hourly, materials, vat);
 
-      await queryO("UPDATE invoice SET ?  WHERE ?", [{ name, address, postal, date, enddate, description, hours, hourly, vat, hoursPrice, subtotal, vatPrice, total }, { id: invoice_number }]);
+      await queryO("UPDATE invoice SET ?  WHERE ?", [{ invoiceNumber: invoice_number, name, address, postal, date, enddate, description, hours, hourly, vat, hoursPrice, subtotal, vatPrice, total }, { id }]);
+      await deleteOldMaterials(oldInvoiceNumber);
       await deleteMaterials(invoice_number);
       await updateMaterials(invoice_number, materials);
+      callback();
     }
   } catch (err) {
     if (err) throw err;
@@ -66,13 +78,25 @@ async function updateInvoice(body) {
 }
 
 async function deleteMaterials(invoiceId) {
-  let materials = await query(`SELECT materials.* FROM invoice INNER JOIN invoice_materials im ON im.invoice_id = invoice.id INNER JOIN materials ON im.materials_id = materials.id AND invoice.id = ${invoiceId}`);
+  let materials = await query(`SELECT materials.* FROM invoice INNER JOIN invoice_materials im ON im.invoice_id = invoice.invoiceNumber INNER JOIN materials ON im.materials_id = materials.id AND invoice.invoiceNumber = ${invoiceId}`);
 
   if (materials.length) {
     materials.forEach(async (mat) => {
       await query(`DELETE m, im FROM materials m JOIN invoice_materials im ON im.materials_id = m.id AND m.id = ${mat.id}`);
     });
   }
+}
+
+async function deleteOldMaterials(invoiceId) {
+  let materials = await query(`SELECT * FROM invoices.invoice_materials WHERE invoice_materials.invoice_id = ${invoiceId}`);
+
+  if (materials.length) {
+    materials.forEach(async (mat) => {
+      await query(`DELETE FROM invoices.invoice_materials WHERE invoice_materials.invoice_id = ${invoiceId}`);
+      await query(`DELETE FROM invoices.materials WHERE materials.id = ${mat.materials_id}`);
+    });
+  }
+
 }
 
 async function updateMaterials(invoiceId, materials) {
