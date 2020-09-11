@@ -93,11 +93,12 @@ app.get("/invoice/:id/edit", async (req, res) => {
   invoice[0].date = DDMMYYYYToYYYYMMDD(invoice[0].date);
   invoice[0].enddate = DDMMYYYYToYYYYMMDD(invoice[0].enddate);
 
-  res.render("invoices/edit", { invoice: invoice[0], materials, id: req.params.id });
+  res.render("invoices/edit", { invoice: invoice[0], materials });
 });
 
 //UPDATE
 app.put("/invoice/:id", sanitize, (req, res) => {
+  console.log(req.body);
   updateInvoice(req.body, () => {
     res.redirect("/");
   });

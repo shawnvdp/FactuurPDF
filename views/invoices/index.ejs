@@ -82,40 +82,43 @@
           <div class="description pl-20 pb-30">
             <p><%= invoice.description %></p>
           </div>
-          <div class="hours pl-20 pb-30">
-            <h4>Aantal uren</h4>
-            <div class="pricing_row">
-              <div class="pricing_row_item">
-                <p><%= invoice.hours %> x €<%= invoice.hourly %> p.u.</p>
-              </div>
-              <div class="pricing_row_euro">
-                <p>€</p>
-              </div>
-              <div class="pricing_row_price">
-                <p><%= invoice.hoursPrice %></p>
+          <% if (invoice.hours != "0") { %>
+            <div class="hours pl-20 pb-30">
+              <h4>Aantal uren</h4>
+              <div class="pricing_row">
+                <div class="pricing_row_item">
+                  <p><%= invoice.hours %> x €<%= invoice.hourly %> p.u.</p>
+                </div>
+                <div class="pricing_row_euro">
+                  <p>€</p>
+                </div>
+                <div class="pricing_row_price">
+                  <p><%= invoice.hoursPrice %></p>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="materials pl-20 pb-30">
-            <% if (materials.length) { %>
-              <h4>Materialen</h4>
-              <ul>
-                <% for(let i = 0; i < materials.length; i++){ %>
-                  <li class="pricing_row">
-                    <div class="pricing_row_item">
-                      <p><%= materials[i].name %></p>
-                    </div>
-                    <div class="pricing_row_euro">
-                      <p>€</p>
-                    </div>
-                    <div class="pricing_row_price">
-                      <p><%= materials[i].price %></p>
-                    </div>
-                  </li>
-                <% } %>
-              </ul>
-            <% } %>
-          </div>
+            <div class="materials pl-20 pb-30">
+              <% if (materials.length) { %>
+                <h4>Materialen</h4>
+                <ul>
+                  <% for(let i = 0; i < materials.length; i++){ %>
+                    <li class="pricing_row">
+                      <div class="pricing_row_item">
+                        <p><%= materials[i].name %></p>
+                      </div>
+                      <div class="pricing_row_euro">
+                        <p>€</p>
+                      </div>
+                      <div class="pricing_row_price">
+                        <p><%= materials[i].price %></p>
+                      </div>
+                    </li>
+                  <% } %>
+                </ul>
+              <% } %>
+            </div>
+          <% } %>
+          
         </div>
         <div class="invoice_price">
           <div class="invoice_price_wrapper">

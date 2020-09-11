@@ -4,7 +4,7 @@
 
 <div class="container">
   <h1 class="form_header">Bewerk factuur <%= invoice.invoiceNumber %></h1>
-  <form action="/invoice/<%= id %>?_method=PUT" method="POST">
+  <form action="/invoice/<%= invoice.invoiceNumber %>?_method=PUT" method="POST">
     <div class="form-row">
       <div class="col-md-2 mb-3">
         <label for="factuurNummer">Factuurnummer</label>
@@ -12,7 +12,7 @@
       </div>
       <div class="col-md-2 mb-3">
         <label for="staticPriceCb">Aangenomen bedrag?</label>
-        <% if (invoice.hoursPrice == "0" || invoice.hoursPrice == null) { %>
+        <% if (invoice.hours == "0" || invoice.hours == null) { %>
           <input class="form-control" id="staticPriceCb" type="checkbox" value="true" checked>
         <% } else { %>
           <input class="form-control" id="staticPriceCb" type="checkbox" value="true">
@@ -20,7 +20,7 @@
       </div>
       <div class="col-md-2 mb-3">
         <label for="staticPrice">Aangenomen bedrag</label>
-        <% if (invoice.hoursPrice == "0" || invoice.hoursPrice == null) { %>
+        <% if (invoice.hours == "0" || invoice.hours == null) { %>
           <input value="<%= invoice.subtotal %>" class="form-control" id="staticPrice" type="text" name="staticPriceSubtotal" placeholder="Bedrag">
         <% } else { %>
           <input class="form-control" id="staticPrice" type="text" name="staticPriceSubtotal" placeholder="Bedrag" disabled>
@@ -71,7 +71,7 @@
     <ul class="form-row materials">
       <label>Materialen</label>
       <% materials.forEach(material => { %>
-        <% if (invoice.hoursPrice == "0" || invoice.hoursPrice == null) { %>
+        <% if (invoice.hours == "0" || invoice.hours == null) { %>
           <li class="col-md-12 mb-1">
             <div class="form-row">
               <div class="col-md-6">
