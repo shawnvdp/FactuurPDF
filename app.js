@@ -44,7 +44,7 @@ function sanitize(req, res, next) {
 }
 
 app.get("/", async (req, res) => {
-  let invoices = await query("SELECT * FROM invoice");
+  let invoices = await query("SELECT * FROM invoice ORDER BY invoiceNumber");
   res.render("index", { invoices });
 });
 
@@ -98,7 +98,6 @@ app.get("/invoice/:id/edit", async (req, res) => {
 
 //UPDATE
 app.put("/invoice/:id", sanitize, (req, res) => {
-  console.log(req.body);
   updateInvoice(req.body, () => {
     res.redirect("/");
   });

@@ -24,7 +24,7 @@ async function addInvoiceToDb(body) {
   let { invoice_number, name, address, postal, date, enddate, description, hours, hourly, materials, vat, staticPriceSubtotal } = body;
 
   //only add if unique id
-  let idExists = await query(`SELECT * FROM invoice WHERE id = ${invoice_number}`);
+  let idExists = await query(`SELECT * FROM invoice WHERE invoiceNumber = ${invoice_number}`);
   if (idExists.length) return false;
 
   date = YYYYMMDDToDDMMYYYY(date);
