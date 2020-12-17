@@ -23,6 +23,8 @@ async function queryO(queryString, queryOptions) {
 async function addInvoiceToDb(body) {
   let { invoice_number, name, address, postal, date, enddate, description, hours, hourly, materials, vat, staticPriceSubtotal } = body;
 
+  console.log(materials);
+
   //only add if unique id
   let idExists = await query(`SELECT * FROM invoice WHERE invoiceNumber = ${invoice_number}`);
   if (idExists.length) return false;
@@ -34,11 +36,15 @@ async function addInvoiceToDb(body) {
     if (staticPriceSubtotal) {
       //no hours, no hourly, no materials -> only (passed in subtotal / 100) * vat
       let { vatPrice, total } = getInvoicePriceStatic(staticPriceSubtotal, vat);
-      await query(`INSERT INTO invoice (invoiceNumber, name, address, postal, date, enddate, description, vat, subtotal, vatPrice, total) VALUES ('${invoice_number}', '${name}', '${address}', '${postal}', '${date}', '${enddate}', '${description}', '${vat}', '${staticPriceSubtotal}', '${vatPrice}', '${total}');`);
+      connection.query(`INSERT INTO invoice (invoiceNumber, name, address, postal, date, enddate, description, vat, subtotal, vatPrice, total) VALUES ('${invoice_number}', ${connection.escape(name)}, ${connection.escape(address)}, ${connection.escape(postal)}, '${date}', '${enddate}', ${connection.escape(description)}, '${vat}', '${staticPriceSubtotal}', '${vatPrice}', '${total}');`, (err, result) => {
+        if (err) console.log(err);
+      });
     } else {
       let { hoursPrice, subtotal, vatPrice, total } = getInvoicePriceHours(hours, hourly, materials, vat);
       // add to invoice table
-      await query(`INSERT INTO invoice (invoiceNumber, name, address, postal, date, enddate, description, hours, hourly, vat, hoursPrice, subtotal, vatPrice, total) VALUES ('${invoice_number}', '${name}', '${address}', '${postal}', '${date}', '${enddate}', '${description}', '${hours}', '${hourly}', '${vat}', ${hoursPrice}, '${subtotal}', '${vatPrice}', '${total}');`);
+      connection.query(`INSERT INTO invoice (invoiceNumber, name, address, postal, date, enddate, description, hours, hourly, vat, hoursPrice, subtotal, vatPrice, total) VALUES ('${invoice_number}', ${connection.escape(name)}, ${connection.escape(address)}, ${connection.escape(postal)}, '${date}', '${enddate}', ${connection.escape(description)}, '${hours}', '${hourly}', '${vat}', ${hoursPrice}, '${subtotal}', '${vatPrice}', '${total}');`, (err, result) => {
+        if (err) console.log(err);
+      });
     }
     if (materials) {
       updateMaterials(invoice_number, materials);
