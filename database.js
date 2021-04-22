@@ -39,7 +39,32 @@ class Database {
 
     return materials;
   }
+  
+  async doesInvoiceExistWithNumber(number) {
+    const result = await this.query(`SELECT * FROM invoice WHERE invoiceNumber = ${number}`);
 
+    return result.length > 1;
+  }
+
+  // async createNewInvoice(body) {
+  //   let { invoice_number, name, address, postal, date, enddate, description, hours, hourly, materials, vat, staticPriceSubtotal } = body;
+
+  //   const invoiceExists = this.doesInvoiceExistWithNumber(invoice_number);
+
+  //   if (invoiceExists) {
+  //     console.log(`invoice with ${invoice_number} already exists`);
+  //     return false;
+  //   }
+
+  //   date = YYYYMMDDToDDMMYYYY(date);
+  //   enddate = YYYYMMDDToDDMMYYYY(enddate);
+
+
+  // }
+
+  // async createMaterialsForInvoiceNumber(number) {
+
+  // }
 }
 
 module.exports = Database;

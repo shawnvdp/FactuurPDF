@@ -59,7 +59,7 @@ app.get("/invoice/new", (req, res) => {
 
 //CREATE
 app.post("/invoice", sanitize, async (req, res) => {
-  let success = await addInvoiceToDb(req.body);
+  let success = await DB.createNewInvoice(req.body);
   if (!success) {
     res.send("Factuurnummer bestaat al in de database.");
   } else {
