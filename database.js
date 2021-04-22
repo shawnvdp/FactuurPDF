@@ -20,6 +20,26 @@ async function queryO(queryString, queryOptions) {
   });
 }
 
+async function getInvoiceByNumber(number) {
+  const invoice = await query(`SELECT * FROM invoices.invoice WHERE invoiceNumber = ${number}`);
+
+  if (!invoice.length) {
+    return null;
+  }
+
+  return invoice;
+}
+
+async function getInvoiceMaterialsByNumber(number) {
+  const materials = await query(`SELECT materials.* FROM invoice INNER JOIN invoice_materials im ON im.invoice_id = invoice.invoiceNumber INNER JOIN materials ON im.materials_id = materials.id AND invoice.invoiceNumber = ${number}`);
+
+  if (!materials.length) {
+    return null;
+  }
+
+  return materials;
+}
+
 async function addInvoiceToDb(body) {
   let { invoice_number, name, address, postal, date, enddate, description, hours, hourly, materials, vat, staticPriceSubtotal } = body;
 
@@ -165,4 +185,4 @@ function getInvoicePriceStatic(subtotal, vat) {
   return { vatPrice, total };
 }
 
-module.exports = { query, updateInvoice, addInvoiceToDb };
+module.exports = { query, updateInvoice, addInvoiceToDb, getInvoiceByNumber, getInvoiceMaterialsByNumber };

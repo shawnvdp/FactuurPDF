@@ -7,9 +7,9 @@ const expressSanitizer = require("express-sanitizer"),
 
 const PORT = process.env.PORT || 3000;
 
-const { query, updateInvoice, addInvoiceToDb } = require("./database");
+const { query, updateInvoice, addInvoiceToDb, getInvoiceByNumber, getInvoiceMaterialsByNumber } = require("./database");
 const connection = require("./db");
-const { DDMMYYYYToYYYYMMDD, formatInvoiceId } = require("./util");
+const { DDMMYYYYToYYYYMMDD, formatInvoiceIdWithMinZeros } = require("./util");
 
 connection.connect();
 
@@ -67,15 +67,15 @@ app.post("/invoice", sanitize, async (req, res) => {
 
 //READ
 app.get("/invoice/:id", async (req, res) => {
-  let invoice = await query(`SELECT * FROM invoices.invoice WHERE invoiceNumber = ${req.params.id}`);
-  let materials = await query(`SELECT materials.* FROM invoice INNER JOIN invoice_materials im ON im.invoice_id = invoice.invoiceNumber INNER JOIN materials ON im.materials_id = materials.id AND invoice.invoiceNumber = ${req.params.id}`);
+  const invoice = await getInvoiceByNumber(req.params.id);
+  const materials = await getInvoiceMaterialsByNumber(req.params.id);
 
-  if (!invoice.length) {
+  if (invoice == null || materials == null) {
     res.redirect("/");
     throw new Error(`No result found in database for id: ${req.params.id}`);
   }
 
-  invoice[0].invoiceNumber = formatInvoiceId(invoice[0].invoiceNumber);
+  invoice[0].invoiceNumber = formatInvoiceIdWithMinZeros(invoice[0].invoiceNumber);
 
   res.render("invoices/index", { invoice: invoice[0], materials, reminder: req.query.reminder, id: req.body.id });
 });

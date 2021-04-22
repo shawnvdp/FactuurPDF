@@ -12,7 +12,7 @@ function DDMMYYYYToYYYYMMDD(date) {
   return formattedDate;
 }
 
-function formatInvoiceId(id) {
+function formatInvoiceIdWithMinZeros(id) {
   let formattedId = "";
   let desiredLength = 9;
 
@@ -24,4 +24,4 @@ function formatInvoiceId(id) {
   return formattedId;
 }
 
-module.exports = { YYYYMMDDToDDMMYYYY, DDMMYYYYToYYYYMMDD, formatInvoiceId };
+module.exports = { YYYYMMDDToDDMMYYYY, DDMMYYYYToYYYYMMDD, formatInvoiceIdWithMinZeros };
