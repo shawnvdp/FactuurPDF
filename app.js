@@ -3,15 +3,16 @@ const expressSanitizer = require("express-sanitizer"),
   app = express(),
   puppeteer = require("puppeteer"),
   path = require("path"),
-  methodOverride = require("method-override");
+  methodOverride = require("method-override"),
+  Database = require("./Database"),
+  DB = new Database();
+
 
 const PORT = process.env.PORT || 3000;
 
-const { query, updateInvoice, addInvoiceToDb, getInvoiceByNumber, getInvoiceMaterialsByNumber } = require("./database");
-const connection = require("./db");
+// const { query, updateInvoice, addInvoiceToDb, getInvoiceByNumber, getInvoiceMaterialsByNumber, getAllInvoices } = require("./database");
+// const connection = require("./dbconnection");
 const { DDMMYYYYToYYYYMMDD, formatInvoiceIdWithMinZeros } = require("./util");
-
-connection.connect();
 
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
@@ -23,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 
 app.use(expressSanitizer());
+
 
 function sanitize(req, res, next) {
   const mapObj = {
@@ -44,7 +46,7 @@ function sanitize(req, res, next) {
 }
 
 app.get("/", async (req, res) => {
-  let invoices = await query("SELECT * FROM invoice ORDER BY invoiceNumber");
+  const invoices = await DB.getAllInvoices();
   res.render("index", { invoices });
 });
 
@@ -67,10 +69,12 @@ app.post("/invoice", sanitize, async (req, res) => {
 
 //READ
 app.get("/invoice/:id", async (req, res) => {
-  const invoice = await getInvoiceByNumber(req.params.id);
-  const materials = await getInvoiceMaterialsByNumber(req.params.id);
+  const invoice = await DB.getInvoiceByNumber(req.params.id);
+  const materials = await DB.getInvoiceMaterialsByNumber(req.params.id);
 
-  if (invoice == null || materials == null) {
+  console.log(invoice, materials);
+
+  if (invoice == null) {
     res.redirect("/");
     throw new Error(`No result found in database for id: ${req.params.id}`);
   }
@@ -82,8 +86,8 @@ app.get("/invoice/:id", async (req, res) => {
 
 //EDIT FORM
 app.get("/invoice/:id/edit", async (req, res) => {
-  let invoice = await query(`SELECT * FROM invoices.invoice WHERE invoiceNumber = ${req.params.id}`);
-  let materials = await query(`SELECT materials.* FROM invoice INNER JOIN invoice_materials im ON im.invoice_id = invoice.invoiceNumber INNER JOIN materials ON im.materials_id = materials.id AND invoice.invoiceNumber = ${req.params.id}`);
+  const invoice = await DB.getInvoiceByNumber(req.params.id);
+  const materials = await DB.getInvoiceMaterialsByNumber(req.params.id);
 
   if (!invoice.length) {
     res.redirect("/");
